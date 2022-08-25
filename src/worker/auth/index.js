@@ -244,7 +244,8 @@ export async function verifyAuthCredentials(auth, ref) {
 export async function verifyAuthToken(auth, ref) {
   try {
     auth.verified = await verifyToken(auth.token, ref.route, SECRET_KEY);
-    auth.route = ref.route;
+    // update the route to verified route
+    auth.route = auth.verified.route;
   } catch (e) {
     auth.error = UnauthorizedException(e.message);
   }

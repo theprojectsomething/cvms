@@ -141,9 +141,10 @@ export async function verifyToken(token, routeActive, secretKey=DEFAULT_SECRET_K
   }
  
   // 2. reject if route outwardly mismatches (i.e. provided route !== current route)
+  // unless there is no active route, in which case we can proceed to verification
   const route = from64(route64);
-  if (route !== routeActive) {
-    throw new Error('URL mismatch');
+  if (routeActive && route !== routeActive) {
+    throw new Error('Not authorised for this route');
   }
 
   // 3. if token doesn't exist in hot-cache we need to cryptographically verify 
@@ -165,7 +166,7 @@ export async function verifyToken(token, routeActive, secretKey=DEFAULT_SECRET_K
     tokenCache.add(token);
   }
 
-  return { expires: new Date(+expiry), cached };
+  return { expires: new Date(+expiry), cached, route };
 }
 
 // clear hot-cache, either for a single token or everything (keys + tokens)
