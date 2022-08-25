@@ -7,7 +7,8 @@
   "scripts": {
     "preview": "wrangler pages dev ./dist --binding preview=1 --local-protocol https",
     "dev": "vite build --mode development & (sleep 2 && npm run preview)",
-    "build": "vite build"
+    "build": "vite build",
+    "publish": "npx wrangler pages publish ./dist"
   },
   "author": "",
   "license": "MIT",
