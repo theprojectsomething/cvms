@@ -15,7 +15,7 @@ const __vite_glob_0_0$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineP
   default: auth
 }, Symbol.toStringTag, { value: 'Module' }));
 
-const __vite_glob_1_0 = "---\ntitle: Example Private Route\ndate: 2022-08-25 \nheadings:\n  - Welcome!\n  - Templates\n  - Routes\nlinks:\n  - ~/shared/\n  - ~/shared/hello\n  - https://commonmark.org/\n  - https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax\n---\n\n# Example Private Route\n\n## Welcome!\n\nThis page is rendered as HTML from a [markdown-formatted](https://commonmark.org/) text file. Markdown allows you to quickly layout a page without any fuss, including things like:\n- formatted text including *italics*, **bold**, ~~strikethrough~~ or _**~~combinations~~**_\n- [external links](shared/hello) and [internal ones](#welcome)\n- lists (like this one)\n- headings (like above) and paragraphs (like below)\n- and [much more](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)\n\n### Templates\n\nThe markdown file is rendered into a HTML page using a template - a file named **template.html** that lives in the same folder (or a parent). Each markdown file is essentially a page. You can take a look at **routes/example-private-route/index.md** to understand how this page was put together.\n\n<style>\n#welcome:target {\n  outline: none;\n}\n#welcome:target::before {\n  content: '';\n  display: inline-block;\n  width: 5em;\n  position: absolute;\n  height: 1em;\n  z-index: -1;\n  outline:  1px auto;\n}\n</style>\n\n### Routes\n\nEvery file that sits under a given route (including all files and the page you are currently looking at) are private and cannot be accessed without a passphrase. In fact the route itself is secret. To give someone access, the only thing you need to share is the passphrase. You can create as many routes as you like, but keep in mind that each needs a unique passphrase.\n\nThere are also two *special routes / folders*: **public** which is public - anyone can access it without a passphrase; and **shared** which is not public, but is accessible to anyone with a passphrase for any route. Any files that sit under the **shared** route are accessible via an \"alias\" on the current route. For example, if you are signed into **example-private-route** you can access shared files  under **cv/example-private-route/{name}/shared/**, like [this one](/cv/example-private-route/anon/shared/). Fun times.\n\n*Good luck!*";
+const __vite_glob_1_0 = "---\ntitle: Example Private Route\ndate: 2022-08-25 \nheadings:\n  - Welcome!\n  - Templates\n  - Private routes\n  - Special routes\nlinks:\n  - ~/shared/\n  - ~/shared/hello\n  - https://commonmark.org/\n  - https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax\n---\n\n# Example Private Route\n\n## Welcome!\n\nThis page is rendered as HTML from a [markdown-formatted](https://commonmark.org/) text file. Markdown allows you to quickly layout a page without any fuss, including things like:\n- formatted text including *italics*, **bold**, ~~strikethrough~~ or _**~~combinations~~**_\n- [external links](shared/hello) and [internal ones](#welcome)\n- lists (like this one)\n   1. and numbered\n   2. or sub lists\n   3. like this one\n- **headings (like above)** and paragraphs (like below)\n- plus [much more](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)\n\n### Templates\n\nSimple markdown documents are turned into 'stylish' HTML pages using **template.html** files, that live alongside them in the document structure. Each markdown document in the project is essentially a page on the website. For an example, take a look at the [markdown behind this page](/cv/example-private-route/anon/index.md).\n\n<style>\n/* this is css embedded in our markdown! */\n#welcome:target {\n  outline: none;\n}\n#welcome:target::before {\n  content: '';\n  display: inline-block;\n  width: 5em;\n  position: absolute;\n  height: 1em;\n  z-index: -1;\n  outline:  1px auto;\n}\n</style>\n\n### Private routes\n\nRoutes are just a fancy name for the folders containing your documents, but how you structure these folders is key to how access is given. Excusing some [useful exceptions](#special-routes), every file on the server is by default *private and secure*.\n\nTo give someone access to a document, you first share a **passphrase**. This can be entered into the homepage to reveal the route to your document and authorise access. You can create as many routes as you like, each with its own unique passphrase.\n\n### Special routes\n\nIn addition to private routes there are also two *special routes* that live in folders:\n1. The **public** route sits at [/cv/public/](/cv/public/) and contains files that can be accessed directly, without a passphrase\n2. The **shared** route is not public, but is accessible to anyone with a passphrase for *any route*. Files that sit under the shared route are accessible via an \"alias\" attached to the active route. For example, if you have the passphrase for **example-private-route** you would access shared files under [/cv/example-private-route/{name}/shared/](/cv/example-private-route/anon/shared/). Fun times.\n\n---\n\nAnd there's lots more features.\n\n*Good luck!*";
 
 const __vite_glob_1_1 = "---\ntitle: Public index\ndate: 2022-08-25 \n---\n\n# PUBLIC\n\nThe template for this file sits in a parent folder.";
 
@@ -441,7 +441,7 @@ async function verifyAuthCredentials(auth, ref) {
 
     // specify a HttpOnly auth cookie containing our token
     auth.headers = {
-      'Set-Cookie': `Authorization="${token}"; HttpOnly; Secures; Path=${ref.base}${data.route}; SameSite=Strict; Expires="${expires.toUTCString()}"`,
+      'Set-Cookie': `Authorization="${token}"; HttpOnly; Secure; Path=${ref.base}${data.route}; SameSite=Strict; Expires="${expires.toUTCString()}"`,
     };
   }
 }
@@ -472,9 +472,9 @@ async function getAuth(request, ref) {
   };
 }
 
-const attributes$3 = {"title":"Example Private Route","date":"2022-08-25T00:00:00.000Z","headings":["Welcome!","Templates","Routes"],"links":["~/shared/","~/shared/hello","https://commonmark.org/","https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax"]};
-const html$3 = "<h1><a id=\"example-private-route\" class=\"anchor\" href=\"#example-private-route\" aria-hidden=\"true\"></a>Example Private Route</h1>\n<h2><a id=\"welcome\" class=\"anchor\" href=\"#welcome\" aria-hidden=\"true\"></a>Welcome!</h2>\n<p>This page is rendered as HTML from a <a href=\"https://commonmark.org/\">markdown-formatted</a> text file. Markdown allows you to quickly layout a page without any fuss, including things like:</p>\n<ul>\n<li>formatted text including <em>italics</em>, <strong>bold</strong>, <s>strikethrough</s> or <em><strong><s>combinations</s></strong></em></li>\n<li><a href=\"shared/hello\">external links</a> and <a href=\"#welcome\">internal ones</a></li>\n<li>lists (like this one)</li>\n<li>headings (like above) and paragraphs (like below)</li>\n<li>and <a href=\"https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax\">much more</a></li>\n</ul>\n<h3><a id=\"templates\" class=\"anchor\" href=\"#templates\" aria-hidden=\"true\"></a>Templates</h3>\n<p>The markdown file is rendered into a HTML page using a template - a file named <strong>template.html</strong> that lives in the same folder (or a parent). Each markdown file is essentially a page. You can take a look at <strong>routes/example-private-route/index.md</strong> to understand how this page was put together.</p>\n<style>\n#welcome:target {\n  outline: none;\n}\n#welcome:target::before {\n  content: '';\n  display: inline-block;\n  width: 5em;\n  position: absolute;\n  height: 1em;\n  z-index: -1;\n  outline:  1px auto;\n}\n</style>\n<h3><a id=\"routes\" class=\"anchor\" href=\"#routes\" aria-hidden=\"true\"></a>Routes</h3>\n<p>Every file that sits under a given route (including all files and the page you are currently looking at) are private and cannot be accessed without a passphrase. In fact the route itself is secret. To give someone access, the only thing you need to share is the passphrase. You can create as many routes as you like, but keep in mind that each needs a unique passphrase.</p>\n<p>There are also two <em>special routes / folders</em>: <strong>public</strong> which is public - anyone can access it without a passphrase; and <strong>shared</strong> which is not public, but is accessible to anyone with a passphrase for any route. Any files that sit under the <strong>shared</strong> route are accessible via an “alias” on the current route. For example, if you are signed into <strong>example-private-route</strong> you can access shared files  under <strong>cv/example-private-route/{name}/shared/</strong>, like <a href=\"/cv/example-private-route/anon/shared/\">this one</a>. Fun times.</p>\n<p><em>Good luck!</em></p>\n";
-const toc$3 = [{"level":"1","content":"<a id=\"example-private-route\" class=\"anchor\" href=\"#example-private-route\" aria-hidden=\"true\"></a>Example Private Route"},{"level":"2","content":"<a id=\"welcome\" class=\"anchor\" href=\"#welcome\" aria-hidden=\"true\"></a>Welcome!"},{"level":"3","content":"<a id=\"templates\" class=\"anchor\" href=\"#templates\" aria-hidden=\"true\"></a>Templates"},{"level":"3","content":"<a id=\"routes\" class=\"anchor\" href=\"#routes\" aria-hidden=\"true\"></a>Routes"}];
+const attributes$3 = {"title":"Example Private Route","date":"2022-08-25T00:00:00.000Z","headings":["Welcome!","Templates","Private routes","Special routes"],"links":["~/shared/","~/shared/hello","https://commonmark.org/","https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax"]};
+const html$3 = "<h1><a id=\"example-private-route\" class=\"anchor\" href=\"#example-private-route\" aria-hidden=\"true\"></a>Example Private Route</h1>\n<h2><a id=\"welcome\" class=\"anchor\" href=\"#welcome\" aria-hidden=\"true\"></a>Welcome!</h2>\n<p>This page is rendered as HTML from a <a href=\"https://commonmark.org/\">markdown-formatted</a> text file. Markdown allows you to quickly layout a page without any fuss, including things like:</p>\n<ul>\n<li>formatted text including <em>italics</em>, <strong>bold</strong>, <s>strikethrough</s> or <em><strong><s>combinations</s></strong></em></li>\n<li><a href=\"shared/hello\">external links</a> and <a href=\"#welcome\">internal ones</a></li>\n<li>lists (like this one)\n<ol>\n<li>and numbered</li>\n<li>or sub lists</li>\n<li>like this one</li>\n</ol>\n</li>\n<li><strong>headings (like above)</strong> and paragraphs (like below)</li>\n<li>plus <a href=\"https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax\">much more</a></li>\n</ul>\n<h3><a id=\"templates\" class=\"anchor\" href=\"#templates\" aria-hidden=\"true\"></a>Templates</h3>\n<p>Simple markdown documents are turned into ‘stylish’ HTML pages using <strong>template.html</strong> files, that live alongside them in the document structure. Each markdown document in the project is essentially a page on the website. For an example, take a look at the <a href=\"/cv/example-private-route/anon/index.md\">markdown behind this page</a>.</p>\n<style>\n/* this is css embedded in our markdown! */\n#welcome:target {\n  outline: none;\n}\n#welcome:target::before {\n  content: '';\n  display: inline-block;\n  width: 5em;\n  position: absolute;\n  height: 1em;\n  z-index: -1;\n  outline:  1px auto;\n}\n</style>\n<h3><a id=\"private-routes\" class=\"anchor\" href=\"#private-routes\" aria-hidden=\"true\"></a>Private routes</h3>\n<p>Routes are just a fancy name for the folders containing your documents, but how you structure these folders is key to how access is given. Excusing some <a href=\"#special-routes\">useful exceptions</a>, every file on the server is by default <em>private and secure</em>.</p>\n<p>To give someone access to a document, you first share a <strong>passphrase</strong>. This can be entered into the homepage to reveal the route to your document and authorise access. You can create as many routes as you like, each with its own unique passphrase.</p>\n<h3><a id=\"special-routes\" class=\"anchor\" href=\"#special-routes\" aria-hidden=\"true\"></a>Special routes</h3>\n<p>In addition to private routes there are also two <em>special routes</em> that live in folders:</p>\n<ol>\n<li>The <strong>public</strong> route sits at <a href=\"/cv/public/\">/cv/public/</a> and contains files that can be accessed directly, without a passphrase</li>\n<li>The <strong>shared</strong> route is not public, but is accessible to anyone with a passphrase for <em>any route</em>. Files that sit under the shared route are accessible via an “alias” attached to the active route. For example, if you have the passphrase for <strong>example-private-route</strong> you would access shared files under <a href=\"/cv/example-private-route/anon/shared/\">/cv/example-private-route/{name}/shared/</a>. Fun times.</li>\n</ol>\n<hr>\n<p>And there’s lots more features.</p>\n<p><em>Good luck!</em></p>\n";
+const toc$3 = [{"level":"1","content":"<a id=\"example-private-route\" class=\"anchor\" href=\"#example-private-route\" aria-hidden=\"true\"></a>Example Private Route"},{"level":"2","content":"<a id=\"welcome\" class=\"anchor\" href=\"#welcome\" aria-hidden=\"true\"></a>Welcome!"},{"level":"3","content":"<a id=\"templates\" class=\"anchor\" href=\"#templates\" aria-hidden=\"true\"></a>Templates"},{"level":"3","content":"<a id=\"private-routes\" class=\"anchor\" href=\"#private-routes\" aria-hidden=\"true\"></a>Private routes"},{"level":"3","content":"<a id=\"special-routes\" class=\"anchor\" href=\"#special-routes\" aria-hidden=\"true\"></a>Special routes"}];
 
 const __vite_glob_0_0 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
@@ -591,7 +591,7 @@ function getMarkdownTemplate(templatePath) {
   // add rendered markdown and assigned template to cache
   for (const [path, { attributes, html, toc }] of Object.entries(markdownParsed)) {
     ++assetsLoaded;
-    const md = markdownRaw[path].replace(/---[\s\S]*---\n\n/, '');
+    const md = markdownRaw[path].replace(/---[\s\S]*?---\n\n/, '');
     const pathKey = path.slice(routesDir.length, -3);
     const template = templateList.find(template => path.startsWith(template.path))?.html;
     cache.set(pathKey, { md, attributes, parsed: { html, toc }, template });
@@ -609,7 +609,12 @@ function getMarkdownTemplate(templatePath) {
 // load a rendered template/markdown file as html (or JSON) for a given path reference
 function getMarkdownAsset(ref) {
   // extract file, path and type (extension) from asset url
-  const [file, path, type] = !ref.isFile && ref.asset.slice(ref.origin.length).match(/^(.+)\.(json|html)$/) || [];
+  // const [file, path, type] = !ref.isFile && ref.asset.slice(ref.origin.length).match(/^(.+)\.(html|md)$/) || [];
+  if (ref.isFile && ref.asset.slice(-3) !== '.md') {
+    return;
+  }
+
+  const [file, path, type] = ref.asset.slice(ref.origin.length).match(/^(.+)\.(html|md)$/) || [];
 
   // return on type mismatch (per regex list)
   if (!type) {
@@ -643,8 +648,10 @@ function getMarkdownAsset(ref) {
     return apiData;
   }
 
+  const isMD = type === 'md';
+
   // render the template
-  if (!markdown.html) {
+  if (!isMD && !markdown.html) {
     // replace <slot data-markdown> elements with the rendered HTML
     markdown.html = markdown.template?.replace(markdownSlotRegEx, (match, prefix) =>
       // ensure newline spaces are copied across
@@ -653,7 +660,7 @@ function getMarkdownAsset(ref) {
     || markdown.parsed.html;
   }
   
-  return { content: markdown.html, type };
+  return { content: isMD ? markdown.md : markdown.html, type };
 }
 
 function apiError(ref, { error, headers }, status) {
@@ -779,8 +786,9 @@ function getPathRef(url, basePath, publicDir='public', sharedDir='shared') {
   return { ...ref, route, user, isShared, endpoint, asset };
 }
 
-function fetchRef(ref, { cf }, { ASSETS }) {
+async function fetchRef(ref, { cf }, { ASSETS }) {
   const markdownAsset = getMarkdownAsset(ref);
+
   if (markdownAsset) {
     if (ref.isApi) {
       return apiResponse(ref, {
@@ -789,9 +797,16 @@ function fetchRef(ref, { cf }, { ASSETS }) {
       });
     }
 
+    // return content (switching md content-type to stop it downloading)
     return new Response(markdownAsset.content, {
-      headers: { 'content-type': 'text/html' }
+      headers: {
+        'content-type': `text/${markdownAsset.type === 'md' ? 'plain' : 'html'}`,
+      }
     });
+  }
+
+  if (ref.isAuth && ref.isFile && ref.components.at(-1) === 'auth.json') {
+    return errorResponse(ref, { error: UnauthorizedException() })
   }
 
   return ASSETS.fetch(new Request(ref.asset, { cf }));

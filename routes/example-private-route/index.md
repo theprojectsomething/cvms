@@ -4,7 +4,8 @@ date: 2022-08-25
 headings:
   - Welcome!
   - Templates
-  - Routes
+  - Private routes
+  - Special routes
 links:
   - ~/shared/
   - ~/shared/hello
@@ -20,14 +21,18 @@ This page is rendered as HTML from a [markdown-formatted](https://commonmark.org
 - formatted text including *italics*, **bold**, ~~strikethrough~~ or _**~~combinations~~**_
 - [external links](shared/hello) and [internal ones](#welcome)
 - lists (like this one)
-- headings (like above) and paragraphs (like below)
-- and [much more](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
+   1. and numbered
+   2. or sub lists
+   3. like this one
+- **headings (like above)** and paragraphs (like below)
+- plus [much more](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
 
 ### Templates
 
-The markdown file is rendered into a HTML page using a template - a file named **template.html** that lives in the same folder (or a parent). Each markdown file is essentially a page. You can take a look at **routes/example-private-route/index.md** to understand how this page was put together.
+Simple markdown documents are turned into 'stylish' HTML pages using **template.html** files, that live alongside them in the document structure. Each markdown document in the project is essentially a page on the website. For an example, take a look at the [markdown behind this page](/cv/example-private-route/anon/index.md).
 
 <style>
+/* this is css embedded in our markdown! */
 #welcome:target {
   outline: none;
 }
@@ -42,10 +47,20 @@ The markdown file is rendered into a HTML page using a template - a file named *
 }
 </style>
 
-### Routes
+### Private routes
 
-Every file that sits under a given route (including all files and the page you are currently looking at) are private and cannot be accessed without a passphrase. In fact the route itself is secret. To give someone access, the only thing you need to share is the passphrase. You can create as many routes as you like, but keep in mind that each needs a unique passphrase.
+Routes are just a fancy name for the folders containing your documents, but how you structure these folders is key to how access is given. Excusing some [useful exceptions](#special-routes), every file on the server is by default *private and secure*.
 
-There are also two *special routes / folders*: **public** which is public - anyone can access it without a passphrase; and **shared** which is not public, but is accessible to anyone with a passphrase for any route. Any files that sit under the **shared** route are accessible via an "alias" on the current route. For example, if you are signed into **example-private-route** you can access shared files  under **cv/example-private-route/{name}/shared/**, like [this one](/cv/example-private-route/anon/shared/). Fun times.
+To give someone access to a document, you first share a **passphrase**. This can be entered into the homepage to reveal the route to your document and authorise access. You can create as many routes as you like, each with its own unique passphrase.
+
+### Special routes
+
+In addition to private routes there are also two *special routes* that live in folders:
+1. The **public** route sits at [/cv/public/](/cv/public/) and contains files that can be accessed directly, without a passphrase
+2. The **shared** route is not public, but is accessible to anyone with a passphrase for *any route*. Files that sit under the shared route are accessible via an "alias" attached to the active route. For example, if you have the passphrase for **example-private-route** you would access shared files under [/cv/example-private-route/{name}/shared/](/cv/example-private-route/anon/shared/). Fun times.
+
+---
+
+And there's lots more features.
 
 *Good luck!*

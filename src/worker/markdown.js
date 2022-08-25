@@ -47,7 +47,7 @@ function getMarkdownTemplate(templatePath) {
   // add rendered markdown and assigned template to cache
   for (const [path, { attributes, html, toc }] of Object.entries(markdownParsed)) {
     ++assetsLoaded;
-    const md = markdownRaw[path].replace(/---[\s\S]*---\n\n/, '');
+    const md = markdownRaw[path].replace(/---[\s\S]*?---\n\n/, '');
     const pathKey = path.slice(routesDir.length, -3);
     const template = templateList.find(template => path.startsWith(template.path))?.html;
     cache.set(pathKey, { md, attributes, parsed: { html, toc }, template });
@@ -65,7 +65,12 @@ function getMarkdownTemplate(templatePath) {
 // load a rendered template/markdown file as html (or JSON) for a given path reference
 export function getMarkdownAsset(ref) {
   // extract file, path and type (extension) from asset url
-  const [file, path, type] = !ref.isFile && ref.asset.slice(ref.origin.length).match(/^(.+)\.(json|html)$/) || [];
+  // const [file, path, type] = !ref.isFile && ref.asset.slice(ref.origin.length).match(/^(.+)\.(html|md)$/) || [];
+  if (ref.isFile && ref.asset.slice(-3) !== '.md') {
+    return;
+  }
+
+  const [file, path, type] = ref.asset.slice(ref.origin.length).match(/^(.+)\.(html|md)$/) || [];
 
   // return on type mismatch (per regex list)
   if (!type) {
@@ -99,8 +104,10 @@ export function getMarkdownAsset(ref) {
     return apiData;
   }
 
+  const isMD = type === 'md'
+
   // render the template
-  if (!markdown.html) {
+  if (!isMD && !markdown.html) {
     // replace <slot data-markdown> elements with the rendered HTML
     markdown.html = markdown.template?.replace(markdownSlotRegEx, (match, prefix) =>
       // ensure newline spaces are copied across
@@ -109,5 +116,5 @@ export function getMarkdownAsset(ref) {
     || markdown.parsed.html;
   }
   
-  return { content: markdown.html, type };
+  return { content: isMD ? markdown.md : markdown.html, type };
 }

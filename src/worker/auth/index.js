@@ -235,7 +235,7 @@ export async function verifyAuthCredentials(auth, ref) {
 
     // specify a HttpOnly auth cookie containing our token
     auth.headers = {
-      'Set-Cookie': `Authorization="${token}"; HttpOnly; Secures; Path=${ref.base}${data.route}; SameSite=Strict; Expires="${expires.toUTCString()}"`,
+      'Set-Cookie': `Authorization="${token}"; HttpOnly; Secure; Path=${ref.base}${data.route}; SameSite=Strict; Expires="${expires.toUTCString()}"`,
     }
   }
 }

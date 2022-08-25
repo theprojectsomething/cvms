@@ -1,4 +1,5 @@
 import { getMarkdownAsset } from './markdown'
+import { UnauthorizedException } from './auth/errors'
 
 export function apiError(ref, { error, headers }, status) {
   return apiResponse(ref, { errors: [error], headers }, status || error.status);
@@ -123,8 +124,9 @@ export function getPathRef(url, basePath, publicDir='public', sharedDir='shared'
   return { ...ref, route, user, isShared, endpoint, asset };
 }
 
-export function fetchRef(ref, { cf }, { ASSETS }) {
+export async function fetchRef(ref, { cf }, { ASSETS }) {
   const markdownAsset = getMarkdownAsset(ref);
+
   if (markdownAsset) {
     if (ref.isApi) {
       return apiResponse(ref, {
@@ -133,9 +135,16 @@ export function fetchRef(ref, { cf }, { ASSETS }) {
       });
     }
 
+    // return content (switching md content-type to stop it downloading)
     return new Response(markdownAsset.content, {
-      headers: { 'content-type': 'text/html' }
+      headers: {
+        'content-type': `text/${markdownAsset.type === 'md' ? 'plain' : 'html'}`,
+      }
     });
+  }
+
+  if (ref.isAuth && ref.isFile && ref.components.at(-1) === 'auth.json') {
+    return errorResponse(ref, { error: UnauthorizedException() })
   }
 
   return ASSETS.fetch(new Request(ref.asset, { cf }));
