@@ -44,7 +44,8 @@ export default {
     const routeUser = auth.user || ref.user;
 
     // redirect authenticated users to either /{route} or /{route}/{name}
-    if (!ref.route || (!ref.user || ref.user !== routeUser)) {
+    // if route is defined, user must be too to stop a redirect loop
+    if (!ref.route || (routeUser && ref.user !== routeUser)) {
       // generate a url and an endpoint for redirecting
       const routeUrl = `${ref.baseurl}/${auth.route}/`;
       
@@ -105,16 +106,7 @@ export default {
      * ===> {ROUTE}/{USER} ALWAYS EXISTS FROM HERE <===
      ***/
 
-    // if (ref.isApi) {
-    //   return new Response(JSON.stringify(auth), {
-    //     status: 200,
-    //     headers: {
-    //       'content-type': 'application/json;charset=UTF-8',
-    //       ...auth.headers,
-    //     },
-    //   });
-    // }
-
+    // we can safely fetch the asset
     return fetchRef(ref, request, env);
   }
 };
