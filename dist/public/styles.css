@@ -1,0 +1,172 @@
+@charset "UTF-8";
+body {
+  align-items: center;
+  background: #eee;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  font-family: monospace, monospace;
+  font-size: 10px;
+  justify-content: center;
+  margin: 0;
+  min-height: 100vh;
+  text-align: center;
+}
+
+main {
+  margin-top: auto;
+}
+@media (max-width: 600px) {
+  main {
+    font-size: 0.8em;
+  }
+}
+
+.page {
+  max-width: 90%;
+  width: 60em;
+  text-align: left;
+  font-size: 1.25em;
+  line-height: 1.6em;
+}
+.page h1 {
+  text-align: center;
+  font-size: 4em;
+  margin: 1em 0;
+}
+
+h1 {
+  color: #bbb;
+  font-size: 10em;
+  font-weight: 100;
+  line-height: 1em;
+  margin-bottom: 0;
+}
+
+form {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin: 1em;
+}
+
+label {
+  font-size: 1.4em;
+  font-weight: 500;
+  line-height: 2em;
+  margin: 2em;
+}
+form[action$="cv/"] label[for=user], form:not([action$="cv/"]) label[for=pass] {
+  display: none;
+}
+
+input {
+  font-family: inherit;
+  font-size: 1.4em;
+  max-width: 100%;
+  padding: 1em 2em;
+  width: 10em;
+}
+form[action$="cv/"] input[name=user], form:not([action$="cv/"]) input[name=pass] {
+  display: none;
+}
+
+.error {
+  color: #666;
+  height: 0;
+  order: 1;
+  position: relative;
+}
+.error:not(:target) {
+  display: none;
+}
+.error:target ~ input:invalid:not(:focus) {
+  border-color: #f00;
+}
+
+button, a {
+  background: none;
+  color: inherit;
+  text-decoration: 1px underline dotted;
+  text-underline-offset: 0.4em;
+}
+button:hover, a:hover {
+  text-decoration-style: solid;
+}
+
+button {
+  border-radius: 0.2em;
+  border: 1px dotted transparent;
+  cursor: pointer;
+  font-size: 1.4em;
+  margin: 1em;
+  padding: 1em 3em 1.2em;
+  position: relative;
+}
+button:hover {
+  border-color: #bbb;
+}
+button::after {
+  content: attr(data-icon);
+  font-size: 1.4em;
+  line-height: 2.4em;
+  margin-left: 0.4em;
+  position: absolute;
+  top: 0;
+  transform: rotate(10deg);
+  transition: 0.2s opacity, 0.2s visibility, 0.4s transform cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+form[action$="cv/"] input[name=pass]:invalid ~ button::after, form:not([action$="cv/"]) input[name=user]:invalid ~ button::after, form:not([action$="cv/"]) input[name=user]:placeholder-shown ~ button::after {
+  opacity: 0;
+  transform: translateX(-0.4em) rotate(-40deg);
+  transition: none;
+  visibility: hidden;
+}
+form[action$="cv/"] .error:target input[name=pass]:invalid ~ button {
+  display: none;
+}
+form[action$="cv/"] button::before {
+  content: attr(data-pass);
+}
+form[action$="cv/"] .error:target ~ input[name=pass] ~ button::before {
+  content: attr(data-pass-invalid);
+}
+form:not([action$="cv/"]) button::before {
+  content: attr(data-user-empty) " →";
+}
+form:not([action$="cv/"]) input[name=user]:valid:not(:placeholder-shown) ~ button::before {
+  content: attr(data-user);
+}
+
+footer {
+  display: flex;
+  flex-direction: column;
+  margin: auto 0 2em;
+}
+footer p {
+  line-height: 1.4em;
+  margin: 0 0 0.8em;
+}
+footer p::before {
+  color: #bbb;
+  padding: 0 0.8em;
+}
+footer p:first-child {
+  order: 1;
+}
+footer p:first-child::before {
+  content: "$";
+  display: inline-block;
+  margin-left: -1em;
+}
+@media (min-width: 600px) {
+  footer {
+    flex-direction: row;
+  }
+  footer p:first-child {
+    order: 0;
+  }
+  footer p:not(:first-child)::before {
+    content: "/";
+  }
+}

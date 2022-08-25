@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>the project:CV</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Between the wish and the thing the world lies waiting.">
+  <meta name="author" content="@som">
+  <meta name="keywords" content="som, meaden">
+  <link rel="shortcut icon" href="/cv/public/favicon.png">
+  <link rel="stylesheet" type="text/css" href="/cv/public/styles.css" />
+</head>
+<body>
+<main>
+  <h1>CV</h1>
+  <form action="/cv/" method="post">
+    <label for="pass">Please enter the passphrase shared with you.</label>
+    <label for="user">Hi. Can you also share your name?</label>
+    <span id="400" class="error">There&rsquo;s been a glitch in the matrix. Ouch.</span>
+    <span id="401" class="error">Access is by invitiation. Your passphrase didn&rsquo;t work</span>
+    <span id="410" class="error">Your passphrase has expired</span>
+    <input id="pass"
+      name="pass"
+      required pattern="\w.*"
+      maxlength="64"
+      autocomplete="off"
+      title="Enter the passphrase shared with you"
+      placeholder="your passphrase">
+    <input id="user"
+      name="user"
+      pattern="\w.*"
+      maxlength="20"
+      autocomplete="off" 
+      title="Enter your first name"
+      placeholder="your first name">
+    <button
+      data-pass="let’s go"
+      data-pass-invalid="try again"
+      data-user="let’s go"
+      data-user-empty="skip"
+      data-icon="🤙"
+    ></button>
+  </form>
+</main>
+<footer>
+  <p>API access is <a href="/cv/api/">available here</a></p>
+  <p>Having trouble? <a href="mailto:cv@theprojectsomething.com">Reach out</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,6 @@
+!*.secret
+.gitsecret/keys/random_seed
+.DS_Store
+node_modules
+vite.config.local.js
+*.local

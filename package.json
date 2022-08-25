@@ -1,0 +1,23 @@
+{
+  "name": "@theprojectsomething/cv-private",
+  "version": "1.0.0",
+  "description": "",
+  "main": "_worker.js",
+  "type": "module",
+  "scripts": {
+    "preview": "wrangler pages dev ./dist --binding preview=1 --local-protocol https",
+    "dev": "vite build --mode development & (sleep 2 && npm run preview)",
+    "build": "vite build"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "globby": "^13.1.2",
+    "markdown-it-github-headings": "^2.0.1",
+    "sass": "^1.54.5",
+    "vite": "^3.0.9",
+    "vite-plugin-html-inject": "^1.0.0",
+    "vite-plugin-markdown": "^2.1.0",
+    "wrangler": "^2.0.27"
+  }
+}
