@@ -4,3 +4,4 @@
 node_modules
 vite.config.local.js
 *.local
+dist

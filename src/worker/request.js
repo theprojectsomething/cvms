@@ -1,4 +1,5 @@
 import { getMarkdownAsset } from './markdown'
+import { getAuthCookie } from './auth'
 import { UnauthorizedException } from './auth/errors'
 
 export function apiError(ref, { error, headers }, status) {
@@ -50,7 +51,7 @@ export function errorResponse(ref, { type, error, headers }) {
         // set the redirect location, with a hash-status for styling the page
         Location: `${ref.baseurl}#${error.status}`,
         // and reset any previously set auth cookies
-        'Set-Cookie': `Authorization=; HttpOnly; Secure; Path=${ref.base}; SameSite=Strict; Expires="${new Date().toUTCString()}"`,
+        'Set-Cookie': getAuthCookie(ref.base),
       }),
     },
   });

@@ -22,14 +22,14 @@
 git clone https://github.com/theprojectsomething/cv.git
 cd cv
 ```
-2. Install and build
+2. Create a private key for in-app auth (you might want to revisit this later)
+```sh
+node -e "console.log('VITE_AUTH_SECRET_KEY=\"'+crypto.randomBytes(16).toString('hex')+'\"')" > .env.local
+```
+3. Install and build the app
 ```sh
 npm install
 npm run build
-```
-3. Secure it with a private key (you might want to revisit this later)
-```sh
-node -e "console.log('VITE_AUTH_SECRET_KEY=\"'+crypto.randomBytes(16).toString('hex')+'\"')" > .env.local
 ```
 4. Publish to the edge
 ```sh

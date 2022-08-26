@@ -24,7 +24,7 @@ export default {
       return fetchRef(ref, request, env);
     }
 
-    const auth = await getAuth(request, ref);
+    const auth = await getAuth(request, ref, env);
 
     // verify if no errors
     if (!auth.error) {
@@ -39,6 +39,7 @@ export default {
     if (auth.error) {
       return errorResponse(ref, auth);
     }
+
 
     // prioritising for the auth user, but falling back to the ref user
     const routeUser = auth.user || ref.user;

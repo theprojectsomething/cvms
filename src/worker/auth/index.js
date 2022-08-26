@@ -26,6 +26,18 @@ const SECRET_KEY = import.meta.env.VITE_AUTH_SECRET_KEY;
 // retrieve our auth routes
 const ROUTE_AUTH = getRouteAuth();
 
+// safari doesn't accept self-signed certs so in preview mode (local dev)
+// we'll manually update our cookie headers to remove secure context
+let secureCookieContextRemoved;
+function removeSecureCookieContext() {
+  secureCookieContextRemoved = true;
+}
+
+// helper function to generate the auth cookie
+export function getAuthCookie(path='', token='', expiry=new Date()) {
+  return `Authorization="${token}"; HttpOnly;${secureCookieContextRemoved ? '' : ' Secure;'} Path=/${path}; SameSite=Strict; Expires="${expiry.toUTCString()}"`;
+}
+
 // process authentication for each of the routes
 function getRouteAuth() {
   const authRoutes = import.meta.glob('/routes/*/auth.json', { eager: true });
@@ -235,7 +247,7 @@ export async function verifyAuthCredentials(auth, ref) {
 
     // specify a HttpOnly auth cookie containing our token
     auth.headers = {
-      'Set-Cookie': `Authorization="${token}"; HttpOnly; Secure; Path=${ref.base}${data.route}; SameSite=Strict; Expires="${expires.toUTCString()}"`,
+      'Set-Cookie': getAuthCookie(ref.base, token, expires),
     }
   }
 }
@@ -252,7 +264,13 @@ export async function verifyAuthToken(auth, ref) {
 }
 
 // retrieve auth credentials / token from the current request
-export async function getAuth(request, ref) {
+export async function getAuth(request, ref, env) {
+  // remove secure cookie context in preview / dev
+  // will never run on production / specifically for local safari
+  if (env.preview) {
+    removeSecureCookieContext();
+  }
+
   getRouteAuth();
   // retrieve / parse credentials
   return await postAuth(request) || await cookieAuth(ref, request) || headerAuth(request) ||
