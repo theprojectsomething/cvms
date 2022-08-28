@@ -1,0 +1,313 @@
+#sidebar--toggle {
+  display: none;
+}
+
+.has-sidebar {
+  @media (max-width: $laptop-desktop) {
+    padding-right: 25em;
+  }
+
+  &.page:not([data-path="cv"]) {
+    @media print {
+      padding-right: 0;
+    }
+  }
+
+  @media print and (max-width: $phone-tablet) {
+    padding-right: 20em;
+  }
+
+
+  @media screen and (max-width: $phone-tablet) {
+    padding-right: 0;
+  }
+
+  &[data-path="cv"] {
+    .page--inner {
+      padding-right: 3em;
+      box-shadow: 25em 0 0 0 #f5f5f5;
+      border-right: 1px dashed #999;
+
+      @media print and (max-width: $phone-tablet) {
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+.sidebar {
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  width: 25em;
+  top: 0;
+  bottom: 0;
+  padding: 3em 3em 0 3em;
+  box-shadow: inset 0 30em 0 0 #e5e5e5;
+
+  .page[data-path="cv"] & {
+    background: #f5f5f5;
+  }
+
+  @media screen and (max-width: $phone-tablet) {
+    position: fixed;
+    z-index: 1;
+
+    #sidebar--toggle:not(:checked) ~ & {
+      width: 7em;
+      padding: 0;
+      box-shadow: inset 0 20em 0 0 #e5e5e5;
+      background: none;
+    }
+
+    #sidebar--toggle:checked ~ & {
+      overflow: auto;
+      max-height: 100vh;
+      bottom: auto;
+      background: #f5f5f5;
+      border-left: 1px dashed #999;
+      box-shadow: 0 0 2em #6665,
+                  inset 0 30em 0 0 #e5e5e5;
+
+    }
+
+  }
+
+  @media print {
+    box-shadow: inset 0 30em 0 0 #e5e5e5,
+                inset 0 0 0 20em #f5f5f5;
+    overflow: initial;
+    padding-right: 2.4em;
+
+    .page:not([data-path="cv"]) & {
+      display: none;
+    }
+  }
+
+  label[for="sidebar--toggle"] {
+    border: 1px dashed transparent;
+    cursor: pointer;
+    background: #bbb;
+    text-align: center;
+    font-size: 3em;
+    line-height: 2.33em;
+    width: 2.33em;
+    text-align: center;
+    margin: 0;
+    display: inline-block;
+    position: relative;
+
+    @media screen and (min-width: $phone-tablet) {
+      display: none;
+    }
+
+    @media print {
+      display: none;
+    }
+
+    &::before {
+      content: '☰';
+    }
+
+    &:hover {
+      color: white;
+    }
+
+    #sidebar--toggle:checked ~ & {
+      position: fixed;
+      top: 0;
+      right: 0;
+      background: inherit;
+      border-color: #bbb;
+      z-index: 1;
+
+
+      &:hover {
+        background: #bbb;
+      }
+
+      &::before {
+        content: '×'
+      }
+    }
+
+  }
+
+  p, li {
+    font-size: 0.9em;
+  }
+
+  ol, ul {
+    list-style: '-' outside;
+    padding-left: 0.6em;
+
+    @media print {
+      padding-left: 0;
+      margin-left: -0.2em;
+      list-style: initial;
+    }
+  }
+
+  li {
+    padding-left: 0.8em;
+
+    @media print {
+      padding-left: 0.2em;
+    }
+  }
+
+  > p:first-of-type {
+    border-radius: 50%;
+    display: block;
+    aspect-ratio: 1;
+    width: 15em;
+    position: relative;
+    margin: 0 0 0 -1em;
+    max-width: 80%;
+
+    @media screen and (max-width: $phone-tablet) {
+      #sidebar--toggle:not(:checked) ~ & {
+        margin: 0;
+        padding: 0.5rem;
+        max-width: 100%;
+      }
+    }
+  }
+
+  img {
+    border-radius: inherit;
+    aspect-ratio: inherit;
+    width: 100%;
+    background: #ccc;
+    color: #999;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  h2 {
+    margin: 1em 0 0.4em;
+    font-size: 1.6em;
+
+    @media screen and (max-width: $phone-tablet) {
+      #sidebar--toggle:not(:checked) ~ & {
+        font-weight: 600;
+        font-size: 2em;
+        margin: 0.2em 0;
+        text-align: center;
+
+        span {
+          display: none;
+        }
+      }
+    }
+
+    ~ h3:first-of-type {
+      position: relative;
+      margin: 1em 0;
+      padding: 0.4em 0;
+      font-size: 1em;
+      font-weight: 400;
+      color: #eee;
+      z-index: 0;
+      background: #444; // needed as well as box-shadow for printing
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      @media screen and (max-width: $phone-tablet) {
+        #sidebar--toggle:not(:checked) ~ & {
+          text-align: center;
+          margin-bottom: 0;
+        }
+      }
+
+      // covers a print gap :)
+      &::before {
+        display: block;
+        content: '';
+        position: absolute;
+        z-index: -1;
+        top: 0;
+        bottom: 0;
+        right: -3em;
+        left: -3em;
+        background: #444; // needed as well as box-shadow for printing
+        box-shadow: inset 0 0 0 4em #444;
+
+        @media screen and (max-width: $phone-tablet) {
+          #sidebar--toggle:not(:checked) ~ & {
+            left: 0em;
+          }
+        }
+      }
+    }
+  }
+}
+
+address {
+  text-align: left;
+  font-style: normal;
+
+  @media screen and (max-width: $phone-tablet) {
+    #sidebar--toggle:not(:checked) ~ .sidebar & {
+      display: none;
+    }
+  }
+
+  p {
+    margin: 0.8em 0;
+
+    &:first-child {
+      line-height: 1.8em;
+    }
+
+    &:last-child {
+      line-height: 1.6em;
+    }
+  }
+}
+
+
+.sidebar--items {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 3em;
+
+  @media screen and (max-width: $phone-tablet) {
+    background: inherit;
+    margin: -1em -3em;
+    padding: 1em 2rem;
+
+    #sidebar--toggle:not(:checked) ~ .sidebar & {
+      display: none;
+    }
+  }
+
+  @media print {
+    display: block;
+    line-height: 1.5em;
+    
+    .links {
+      margin-top: 4em;
+    }
+    
+    .referees {
+      margin-top: 8em;
+    }
+
+    .education {
+      margin-top: 11em;
+      padding-top: 1em;
+    }
+  }
+
+
+
+  .skills {
+    display: inline-block;
+    break-before: page;
+  }
+}

@@ -1,0 +1,192 @@
+.page--back {
+  position: absolute;
+  margin: 1em;
+
+  &:not(:hover) {
+    color: #666;
+  }
+
+  .page[data-path=""] & {
+    display: none;
+  }
+}
+
+.page {
+  font-size: 1.25em;
+  print-color-adjust: exact;
+
+  @media screen and (max-width: $tablet-laptop) {
+    font-size: 0.8em;
+  }
+
+  @media print {
+
+    // resolve font-size cascading issue between firefox/chrome/safari
+    // catch-all here, hacks below
+    font-size: 0.9em;
+    // for chrome, but targets chrome, firefox and safari :(
+    @supports (-webkit-appearance:none) {
+      font-size: 1.15em;
+    }
+    // target firefox only
+    @supports (-moz-appearance:meterbar)  {
+      font-size: 0.9em;
+    }
+    // targets safari (not sure why .. this is definitely a buggy hack)
+    @media not all and (min-resolution:.001dpcm)
+    { @supports (-webkit-appearance:none) {
+      font-size: 0.9em;
+    }}
+
+  }
+
+  main {
+    max-width: 60em;
+    width: 90%;
+    text-align: left;
+    line-height: 1.6em;
+
+    @media print {
+      width: auto;
+    }
+
+    > p:not(:nth-of-type(n + 5)) {
+      font-size: 1.1em;
+      line-height: 1.4em;
+      font-weight: 400;
+    }
+
+    > blockquote:first-of-type {
+      @media print {
+        font-size: 1.2em;
+      }
+    }
+  }
+
+  h1 {
+    text-align: left;
+    font-size: 4em;
+
+    small {
+      font-size: 0.4em;
+    }
+
+    @media print {
+      font-size: 3em;
+    }
+  }
+
+  footer {
+    font-size: 0.8em;
+
+    @media print {
+      display: none;
+    }
+  }
+
+  .three-d {
+    display: flex;
+    align-items: center;
+    margin: -1em 0 -0.4em;
+
+    @media print {
+      margin: -1em 0;
+    }
+  }
+
+  #awards3d {
+    display: inline-block;
+    font-size: 0.45em;
+
+    &:not(:first-child) {
+      margin-left: 2em;
+    }
+  }
+
+  .awards3d {
+    transform: none;
+    position: relative;
+    left: auto;
+    top: auto;
+  }
+
+  .title3d {
+    sub:first-child {
+      font-size: 1em;
+    }
+  }
+
+  .strengths {
+    ul {
+      @media print {
+        font-size: 1.2em;
+        line-height: 1.4em;
+      }
+    }
+  }
+
+  .projects {
+// display: inline-block;
+    break-before: page;
+
+    h2 {
+      @media print {
+        margin-top: 0;
+      }
+    }
+
+    h3 {
+      margin-top: 2.6em;
+      font-size: 1.4em;
+
+      &:first-of-type {
+        margin-top: 1em;
+      }
+
+      small {
+        font-weight: 400;
+        display: block;
+        margin-bottom: 0.8em;
+        font-size: 0.8em;
+      }
+    }
+
+    details {
+      margin: 0.6em 0;
+
+      @media print {
+        &.print-manual:not([open]) {
+          margin-bottom: -0.4em;
+
+          &:first-child {
+
+          }
+        }
+      }
+    }
+  }
+
+  .experience {
+    @media print {
+      a {
+        text-decoration: none;
+      }
+    }
+  }
+
+  .note {
+    margin: 4em 0 0;
+    padding: 3em;
+    background: #ddd;
+  }
+
+}
+
+.page--inner {
+  width: 100%;
+  min-height: 100vh;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

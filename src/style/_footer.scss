@@ -1,0 +1,46 @@
+footer {
+  display: flex;
+  flex-direction: column;
+  margin: auto 0 0;
+  padding: 4em 0 2em;
+
+  p {
+    line-height: 1.4em;
+    margin: 0 0 0.8em;
+
+    &::before {
+      color: #bbb;
+      padding: 0 0.8em;
+    }
+    
+    &:first-child {
+      order: 1;
+      
+      &::before {
+        content: '$';
+        display: inline-block;
+        margin-left: -1em;
+      }
+    }
+  }
+
+  @media (min-width: $phone-tablet) {
+    flex-direction: row;
+
+    p:first-child {
+      order: 0;
+    }
+
+    p:not(:first-child)::before {
+      content: '/';
+    }
+  }
+}
+
+.footer--print {
+  display: none;
+
+  .page:not([data-path=""]) & {
+    display: block;
+  }
+}

@@ -63,10 +63,10 @@ export function getPathRef(url, basePath, publicDir='public', sharedDir='shared'
 
   // base without leading or trailing slashes
   const base = basePath.replace(/^\/|\/$/g, '');
-  const baseurl = `${origin}/${base}`;
+  const baseurl = origin.concat(base ? `/${base}` : '');
   
   // split path into components
-  const components = pathname.slice(1).split('/');
+  const components = pathname.slice(base ? 1 : 0).split('/');
 
   // check we're under the base path
   const isBase = components[0] === base;
@@ -98,12 +98,13 @@ export function getPathRef(url, basePath, publicDir='public', sharedDir='shared'
     return ref;
   }
 
+  // should we add on an index.html?
   const assetSuffix = isFile || pathname.length - base.length < 3 ? '' : isIndex && 'index.html' || '.html';
 
   // if within the base path but auth isn't required (root or public) we'll return the ref as is
   if (!isAuth) {
     // remove the base path + slashes
-    ref.endpoint = pathname.slice(2 + base.length);
+    ref.endpoint = pathname.slice(2 + (base.length || -1));
     ref.asset = `${origin}/${ref.endpoint}${assetSuffix}`;
     return ref;
   }

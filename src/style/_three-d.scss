@@ -1,0 +1,574 @@
+// body {
+//   font-family: monospace, monospace;
+//   min-width: 100vw;
+//   min-height: 100vh;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   background: #ddd;
+  
+//   @media (max-width: 600px) {
+//     font-size: 2.67vw;
+//   }
+// }
+
+
+// a {
+//   color: #222;
+//   text-decoration: underline;
+//   text-decoration-style: dotted;
+//   text-underline-offset: 0.3em;
+//   text-decoration-thickness: 1px;
+  
+//   &:hover {
+//     text-decoration-style: double;
+//   }
+  
+//   &[href="#"] {
+//     position: absolute;
+//     bottom: 1em;
+//     font-size: 0.6em;
+//   }
+// }
+
+.fig3d {
+  perspective: 100em;
+
+  .group {
+    transform-style: preserve-3d;
+  }
+}
+
+@keyframes spin3d {
+  from {
+    transform: rotate3d(0, 0, 0, 360deg);
+  }
+
+  to {
+    transform: rotate3d(0, 1, 0, 360deg);
+  }
+}
+
+@keyframes rotate3d {
+  from {
+    transform: rotate3d(-1, 1, 1, 5deg);
+  }
+
+  to {
+    transform: rotate3d(-1, 0, -1, 15deg);
+  }
+}
+
+.box-inner3d {
+  transform-style: preserve-3d;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.box3d {
+  font-family: monospace;
+  transform-style: preserve-3d;
+  letter-spacing: 0;
+  display: inline-block;
+  position: relative;
+  font-size: 2em;
+  // animation: 5s rotate3d ease-in-out alternate infinite;
+  width: 5em;
+  height: 1em;
+
+  &.small {
+    font-size: 1.25em;
+  }
+
+  &.tiny {
+    font-size: 0.8em;
+  }
+
+  aside {
+    position: absolute;
+    background-color: #ccc;
+    width: 100%;
+    height: 100%;
+    opacity: 0.6;
+  }
+
+  .bottom,
+  .front,
+  .right,
+  .back,
+  .left {
+    background: #aaa;
+  }
+
+  .front {
+    transform: translateZ(2.5em);
+  }
+
+  .right {
+    transform: rotateY(90deg) translateZ(2.5em);
+  }
+
+  .back {
+    transform: rotateY(180deg) translateZ(2.5em);
+  }
+
+  .left {
+    transform: rotateY(-90deg) translateZ(2.5em);
+  }
+
+  .top,
+  .bottom {
+    color: #aaa;
+    height: 5em;
+  }
+
+  .top {
+    background: #ddd;
+    transform: translateY(-50%) rotateX(90deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bottom {
+    transform: translateY(-50%) rotateX(90deg) translateZ(-1em);
+  }
+
+  &.flat {
+    height: 0.2em;
+
+    .bottom {
+      transform: translateY(-50%) rotateX(90deg) translateZ(-0.1em);
+    }
+  }
+
+  &.landscape {
+    .front,
+    .back,
+    .top,
+    .bottom {
+      width: 8em;
+    }
+
+    .right {
+      transform: rotateY(90deg) translateZ(5.5em);
+    }
+  }
+
+  &.portrait {
+    .left,
+    .right {
+      width: 7em;
+    }
+
+    .top,
+    .bottom {
+      height: 7em;
+    }
+
+    .left {
+      transform: rotateY(90deg) translateZ(-3.5em);
+    }
+
+    .right {
+      transform: rotateY(90deg) translateZ(1.5em);
+    }
+
+    &.tiny {
+      .left,
+      .right {
+        width: 9em;
+      }
+
+      .top,
+      .bottom {
+        height: 9em;
+      }
+
+      .left {
+        transform: rotateY(90deg) translateZ(-4.5em);
+      }
+
+      .right {
+        transform: rotateY(90deg) translateZ(0.5em);
+      }
+    }
+  }
+}
+
+.server3d {
+  transform: translate(-50%, -100%) scale(0.6);
+  pointer-events: none;
+  width: 8em;
+  height: 8em;
+  position: absolute;
+  transform-origin: 50% 100%;
+  top: -0.7em;
+  left: 50%;
+  
+  .box3d {
+    transform: translateY(2em) rotate3d(-2, -1, -1, 45deg);
+  }
+
+  .box-inner3d {
+    animation: 10s spin3d linear infinite;
+  }
+  
+  .front,
+    .right,
+    .back,
+    .left,
+    .top,
+    .bottom {
+      transition: opacity 0.2s, transform 0.4s;
+    }
+  
+  
+  #server3d:not(:target) a[href="#server3d"]:not(:hover) ~ & {
+    .front,
+    .right,
+    .back,
+    .left,
+    .top,
+    .bottom {
+      transition-delay: 0s;
+      opacity: 0;
+    }
+    
+    .front {
+      transform: translateZ(3em);
+    }
+
+    .right {
+      transform: rotateY(90deg) translateZ(3em);
+    }
+
+    .back {
+      transform: rotateY(180deg) translateZ(3em);
+    }
+
+    .left {
+      transform: rotateY(-90deg) translateZ(3em);
+    }
+    
+    .top {
+      transform: translateY(-50%) rotateX(90deg) translateZ(0.5em);
+    }
+
+    .bottom {
+      transform: translateY(-50%) rotateX(90deg) translateZ(-1.5em);
+    }
+  }
+  
+  .front { transition-delay: 0.2s; }
+  .right { transition-delay: 0.2s; }
+  .back { transition-delay: 0.2s; }
+  .left { transition-delay: 0.2s; }
+  // .bottom { transition-delay: 0.1s; }
+  
+  #server3d:target ~ &,
+  a[href="#server3d"]:hover ~ & {
+    .bottom { transition-duration: 0.4s; }
+  }
+    
+  .front,
+  .right,
+  .back,
+  .left {
+    background: repeating-linear-gradient(
+      to right,
+      #bbb,
+      #bbb 0.1em,
+      #ccc 0.1em,
+      #ccc 0.2em
+    );
+  }
+}
+
+#screen3d, #server3d, #awards3d {
+  position: relative;
+  padding: 0 3em;
+
+  a {
+    h3 {
+      display: inline-block;
+    }
+  }
+  
+  &:target a {
+    text-decoration-style: double;
+  }
+}
+
+.screen3d {
+  transform: translate(-50%, -100%) scale(0.5);
+  pointer-events: none;
+  width: 13em;
+  height: 8em;
+  position: absolute;
+  transform-origin: 50% 100%;
+  top: -1em;
+  left: 50%;
+
+  .group3d {
+    position: relative;
+    top: 3.5em;
+    transform: rotateX(-90deg) rotateZ(40deg);
+    transition: transform 0.4s;
+
+    .box-inner3d {
+      transition: transform 1s;
+    }
+  }
+
+  #screen3d:target &,
+  a[href="#screen3d"]:hover ~ & {
+    .group3d {
+      transform: rotateX(-90deg);
+    }
+
+    .small .box-inner3d {
+      transform: rotate3d(1, -0.25, -1, 20deg) translateX(1em) translateZ(-1em);
+      transition-delay: 0.2s;
+    }
+
+    .tiny .box-inner3d {
+      transform: rotate3d(1, 0.25, 1, 20deg) translateX(-0.5em) translateZ(1em);
+      transition-delay: 0.1s;
+    }
+
+    .small {
+      transition-delay: 0.2s;
+
+      .front,
+      .back,
+      .top,
+      .bottom,
+      .left,
+      .right {
+        transition-delay: 0.2s;
+      }
+    }
+    .tiny {
+      transition-delay: 0.2s;
+
+      .front,
+      .back,
+      .top,
+      .bottom,
+      .left,
+      .right {
+        transition-delay: 0.1s;
+      }
+    }
+  }
+
+  #screen3d:not(:target) a[href="#screen3d"]:not(:hover) ~ & {
+    .landscape .box-inner3d {
+      transform: translateZ(-0.5em);
+    }
+
+    .top,
+    .bottom,
+    .left,
+    .right,
+    .front,
+    .back {
+      opacity: 0;
+    }
+  }
+
+  .box3d {
+    left: 0;
+    top: 0;
+
+    .top,
+    .bottom,
+    .left,
+    .right,
+    .front,
+    .back {
+      transition: 0.4s opacity;
+    }
+  }
+
+  .portrait {
+    position: absolute;
+  }
+
+  .small {
+    transform: translateX(10em) translateZ(1em) translateY(-1em);
+  }
+
+  .tiny {
+    transform: translateX(-1em) translateZ(3em) translateY(-2em);
+  }
+
+  .top {
+    box-shadow: 0 0 0 0.2em currentColor;
+    border-radius: 0.2em;
+  }
+
+  .portrait .top {
+    box-shadow: 0 0 0 0.1rem currentColor, inset 0 0 0 0.2em currentColor;
+    border-radius: 0.2rem;
+  }
+}
+
+.awards3d {
+  transform: translate(-50%, -100%) scale(0.3);
+  pointer-events: none;
+  position: absolute;
+  transform-origin: 50% 100%;
+  top: -1em;
+  left: 50%;
+}
+
+.award3d {
+  margin: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .group3d {
+    display: inline-block;
+    margin: 0 0.4em;
+    font-size: 0.6em;
+    transition: 0.4s transform;
+    width: 100%;
+    position: absolute;
+    left: -4em;
+    opacity: 0.5;
+    
+    &:last-child {
+      left: 4em;
+      transform: rotate3d(0, 1, 0, 180deg);
+    }
+  }
+  
+  .title3d {
+    margin: 1em;
+    font-size: 2em;
+    text-align: center;
+    font-weight: 600;
+    line-height: 1.2em;
+    transition: 0.8s transform, 0.2s 0.2s opacity;
+    color: #222;
+    
+    #awards3d:not([data-open]):not(:target) a:not(:hover) ~ .awards3d & {
+      transition-delay: 0s;
+      transform: scale(1.2);
+      opacity: 0;
+    }
+    
+    sub {
+      font-size: 0.7em;
+      font-weight: 400;
+      text-transform: uppercase;
+      display: block;
+    }
+  }
+}
+
+.leaf3d {
+  position: relative;
+  height: 2em;
+  width: 4em;
+  transition: 0.4s 0.2s opacity, 0.4s 0.2s transform;
+
+  #awards3d:not([data-open]):not(:target) a:not(:hover) ~ .awards3d & {
+    transition-delay: 0s;
+    opacity: 0;
+  }
+
+  &::before,
+  &::after {
+    position: relative;
+    display: inline-block;
+    width: 1.4em;
+    height: 2em;
+    content: '';    
+    transition: inherit;
+    transition-delay: inherit;
+    
+    #awards3d:not([data-open]):not(:target) a:not(:hover) ~ .awards3d & {
+      transition: 0s 0.4s transform;
+    }
+  }
+
+  &::before {
+    transform: rotate(-45deg);
+    transform-origin: 100% 100%;
+    background: #aaa;
+    box-shadow: inset 0 0 0 1em #aaa;
+
+    #awards3d:not([data-open]):not(:target) a:not(:hover) ~ .awards3d & {
+      transform: rotate3d(0.5, 1, 0.5, -45deg);      
+    }
+  }
+
+  &::after {
+    transform: rotate(45deg);
+    transform-origin: 0% 100%;
+    background: #bbb;
+    box-shadow: inset 0 0 0 1em #aaa;
+
+    #awards3d:not([data-open]):not(:target) a:not(:hover) ~ .awards3d & {
+      transform: rotate3d(0.5, 1, 0.5, 45deg);      
+    }
+  }
+
+  &:nth-child(1) {
+    transform: rotate(45deg) scale(1.3);
+    left: 2.25em;
+    margin-bottom: 0.2em;
+    
+    .group3d:last-child & {
+      transition-delay: 0.2s;    
+    }
+  }
+
+
+  &:nth-child(2) {
+    transition-delay: 0.1s;
+    transform: rotate(35deg) scale(1);
+    left: 0.25em;
+    margin-bottom: 0.8em;
+    
+    .group3d:last-child & {
+      transition-delay: 0.3s;    
+    }
+  }
+
+  &:nth-child(3) {
+    transition-delay: 0.2s;
+    transform: rotate(10deg) scale(0.8);
+    
+    .group3d:last-child & {
+      transition-delay: 0.4s;    
+    }
+  }
+
+  &:nth-child(4) {
+    transition-delay: 0.3s;
+    transform: rotate(-20deg) scale(0.6);
+    margin-top: 0.6em;
+    left: 1.25em;
+    
+    .group3d:last-child & {
+      transition-delay: 0.5s;    
+    }
+  }
+
+  &:nth-child(5) {
+    transition-delay: 0.4s;
+    transform: rotate(-45deg) scale(0.4);
+    margin-top: -0.4em;
+    left: 3.25em;
+    
+    .group3d:last-child & {
+      transition-delay: 0.6s;    
+    }
+  }
+}

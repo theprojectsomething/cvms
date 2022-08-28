@@ -3,7 +3,7 @@ import { apiError, apiResponse, errorResponse, getPathRef, fetchRef } from './wo
 
 // this is the root / base path for our app and the worker should really be setup to run
 // at this path on the domain. Everything below this path will 404 if it hits the worker
-const basePath = '/cv/';
+const basePath = '/';
 
 export default {
   async fetch(request, env, ctx) {
@@ -39,7 +39,6 @@ export default {
     if (auth.error) {
       return errorResponse(ref, auth);
     }
-
 
     // prioritising for the auth user, but falling back to the ref user
     const routeUser = auth.user || ref.user;

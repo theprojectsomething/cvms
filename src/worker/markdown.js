@@ -47,10 +47,16 @@ function getMarkdownTemplate(templatePath) {
   // add rendered markdown and assigned template to cache
   for (const [path, { attributes, html, toc }] of Object.entries(markdownParsed)) {
     ++assetsLoaded;
-    const md = markdownRaw[path].replace(/---[\s\S]*?---\n\n/, '');
+    const md = markdownRaw[path].replace(/^---[\s\S]*?---\n\n/, '');
     const pathKey = path.slice(routesDir.length, -3);
     const template = templateList.find(template => path.startsWith(template.path))?.html;
-    cache.set(pathKey, { md, attributes, parsed: { html, toc }, template });
+    cache.set(pathKey, {
+      md, attributes, template,
+      parsed: {
+        html: renderStaticComponents(html, path, htmlComponents),
+        toc,
+      },
+    });
   }
 
   // warn if no assets are loaded!
@@ -112,9 +118,14 @@ export function getMarkdownAsset(ref) {
     markdown.html = markdown.template?.replace(markdownSlotRegEx, (match, prefix) =>
       // ensure newline spaces are copied across
       markdown.parsed.html.replace(/^./mg, `${prefix}$&`))
+      // include the route and endpoint in the body tag
+      .replace(/(<body[^>]*)/, `$1 data-route="${ref.route}" data-path="${ref.endpoint}" `)
     // if template doesn't exist, just output the markdown (this should never happen)
     || markdown.parsed.html;
   }
   
-  return { content: isMD ? markdown.md : markdown.html, type };
+  return {
+    type,
+    content: isMD ? markdown.md : markdown.html,
+  };
 }

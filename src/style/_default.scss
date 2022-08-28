@@ -1,0 +1,279 @@
+html {
+  background: #ccc;
+  font-size: 10px;
+  font-family: ui-monospace, 
+               Menlo, Monaco, 
+               "Cascadia Mono", "Segoe UI Mono", 
+               "Roboto Mono", 
+               "Oxygen Mono", 
+               "Ubuntu Monospace", 
+               "Source Code Pro",
+               "Fira Mono", 
+               "Droid Sans Mono", 
+               "Courier New",
+               monospace, monospace;
+
+  @media print {
+    background: none;
+  }
+}
+
+body {
+  align-items: center;
+  background: #eee;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0;
+  min-height: 100vh;
+  text-align: center;
+  position: relative;
+
+  @media print {
+    background: inherit;
+  }
+}
+
+main {
+  margin-top: auto;
+  
+  @media (max-width: $phone-tablet) {
+    font-size: 0.8em;
+  }
+
+  @media print {
+    margin-top: initial;
+  }
+}
+
+h1 {
+  margin: 1em 0;
+}
+
+h2 {
+  font-weight: 400;
+}
+
+h2, h3, h4, h5, h6 {
+  margin: 2em 0 1em;
+}
+
+hr {
+  border-top: 1px dashed #666;
+  border-bottom: none;
+  margin: 3em 3em 3em 0;
+}
+
+p {
+  margin: 1em 0;
+}
+
+h1 {
+  color: #bbb;
+  font-size: 10em;
+  font-weight: 100;
+  line-height: 1em;
+  margin-bottom: 0;
+}
+
+ol, ul {
+  padding-left: 2em;
+
+  @media print {
+    padding-left: 1em;
+    // margin-left: -0.2em;
+    list-style: initial;
+  }
+}
+
+li {
+  padding-left: 0.4em;
+  margin: 0.4em 0;
+
+  @media print {
+    padding-left: 0.2em;
+  }
+}
+
+form {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin: 1em;
+}
+
+label {
+  font-size: 1.4em;
+  font-weight: 500;
+  line-height: 2em;
+  margin: 2em;
+  
+  form[action="/"] &[for="user"],
+  form:not([action="/"]) &[for="pass"] {
+    display: none;
+  }
+}
+
+details {
+  margin: 1em 0;
+
+  + {
+    ul, ol, p {
+      margin-top: -0.4em;
+    }
+  }
+
+
+  &[open] {
+   .summary-closed {
+      display: none;
+    }
+  }
+
+  .summary-closed {
+    font-weight: 400;
+  }
+
+  @media print {
+    &.print-manual:not([open]) + {
+      ul, ol, p {
+        display: none;
+      }
+    }
+  }
+
+  @media screen {
+    &:not([open]) + {
+      ul, ol, p {
+        display: none;
+      }
+    }
+  }
+}
+
+summary {
+  font-weight: 600;
+  line-height: 1.6em;
+  cursor: pointer;
+  
+  &:hover {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.4em;
+  }
+
+  @media print {
+    &::marker {
+      display: none;
+      content: '';
+    }
+  }
+}
+
+
+input {
+  font-family: inherit;
+  font-size: 1.4em;
+  max-width: 100%;
+  padding: 1em 2em;
+  width: 16em;
+
+  form[action="/"] &[name="user"],
+  form:not([action="/"]) &[name="pass"] {
+    display: none;
+  }
+}
+
+.error {
+  color: #666;
+  height: 0;
+  order: 1;
+  position: relative;
+  
+  &:not(:target) {
+    display: none;
+  }
+
+  &:target ~ input:invalid:not(:focus) {
+    border-color: #f00;
+  }
+}
+
+button, a {
+  background: none;
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.4em;
+  
+  &:hover {
+    text-decoration-style: solid;
+  }
+}
+
+button {
+  border-radius: 0.2em;
+  border: 1px dotted transparent;
+  cursor: pointer;
+  font-size: 1.4em;
+  margin: 1em;
+  padding: 1em 3em 1.2em;
+  position: relative;
+  
+  &:hover {
+    border-color: #bbb;
+  }
+
+  &::after {
+    content: attr(data-icon);
+    font-size: 1.4em;
+    line-height: 2.4em;
+    margin-left: 0.4em;
+    position: absolute;
+    top: 0;
+    transform: rotate(10deg);
+    transition: 0.2s opacity,
+                0.2s visibility,
+                0.4s transform cubic-bezier(0.34, 1.56, 0.64, 1);
+    
+    form[action="/"] input[name="pass"]:invalid ~ &,
+    form:not([action="/"]) input[name="user"]:invalid ~ &,
+    form:not([action="/"]) input[name="user"]:placeholder-shown ~ & {
+      opacity: 0;
+      transform: translateX(-0.4em) rotate(-40deg);
+      transition: none;
+      visibility: hidden;
+    }
+  }
+
+  form[action="/"] .error:target input[name="pass"]:invalid ~ & {
+    display: none;
+  }
+
+  &::before {
+    form[action="/"] & {
+      content: attr(data-pass);
+    }
+    
+    form[action="/"] .error:target ~ input[name="pass"] ~ & {
+      content: attr(data-pass-invalid);
+    }
+
+    form:not([action="/"]) & {
+      content: attr(data-user-empty) ' →';
+    }
+
+    form:not([action="/"]) input[name="user"]:valid:not(:placeholder-shown) ~ & {
+      content: attr(data-user);
+    }
+  }
+}
+
+@media print {
+  .print-hide {
+    display: none;
+  }
+}
