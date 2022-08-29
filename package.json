@@ -8,7 +8,7 @@
     "build": "vite build",
     "dev": "vite build --mode development & (sleep 2 && npm run preview)",
     "preview": "wrangler pages dev ./dist --binding preview=1 --live-reload --local-protocol https",
-    "publish": "npx wrangler pages publish ./dist"
+    "publish": "wrangler pages publish ./dist"
   },
   "author": "",
   "license": "MIT",
