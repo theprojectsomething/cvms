@@ -6,8 +6,6 @@ import markdownIt from 'markdown-it'
 import mdPluginGithubHeadings from 'markdown-it-github-headings';
 import staticComponentsPlugin from './src/plugins/static-components';
 
-console.log(markdownIt)
-
 // uncommitted (per-machine) options .. make a file per below that exports an object 
 const localConfig = await import('./vite.config.local.js').then(e => e.default).catch(() => {});
 

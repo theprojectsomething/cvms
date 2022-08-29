@@ -157,9 +157,13 @@ export async function verifyToken(token, routeActive, secretKey=DEFAULT_SECRET_K
     const mac = fromMacString(macString);
 
     // reject if signature doesn't match provided data
-    const verified = await crypto.subtle.verify('HMAC', cryptoKey, mac, tokenData);
-    if (!verified) {
-      throw new Error('Invalid token');
+    try {
+      const verified = await crypto.subtle.verify('HMAC', cryptoKey, mac, encoder.encode(tokenData));
+      if (!verified) {
+        throw new Error('Invalid token');
+      }
+    } catch (e) {
+      throw new Error('Something exploded. Please let me know: cv@theprojectsomething.com');
     }
 
     // we can safely add the token to the hot-cache
