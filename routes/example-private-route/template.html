@@ -5,10 +5,13 @@
   <title>the project:CV</title>
   <slot data-static-href="/src/components/meta.html" />
 </head>
-<body>
-<main class="page">
-  <slot data-markdown />
-</main>
-<slot data-static-href="/src/components/footer.html" />
+<body class="page">
+<div class="page--inner">
+  <main>
+    <a class="page--back print-hide" href="./">← Back to documents</a> 
+    <slot data-markdown />
+  </main>
+  <slot data-static-href="/src/components/footer.html" />
+</div>
 </body>
 </html>

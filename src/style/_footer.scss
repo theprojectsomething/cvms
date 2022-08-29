@@ -3,6 +3,8 @@ footer {
   flex-direction: column;
   margin: auto 0 0;
   padding: 4em 0 2em;
+  flex-wrap: wrap;
+  justify-content: center;
 
   p {
     line-height: 1.4em;
@@ -15,13 +17,12 @@ footer {
     
     &:first-child {
       order: 1;
-      
-      &::before {
-        content: '$';
-        display: inline-block;
-        margin-left: -1em;
-      }
     }
+  }
+
+  div {
+    width: 100%;
+    order: 1;
   }
 
   @media (min-width: $phone-tablet) {

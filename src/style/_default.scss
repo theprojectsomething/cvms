@@ -272,6 +272,18 @@ button {
   }
 }
 
+.light {
+  color: #666;
+}
+
+.lighter {
+  color: #bbb;
+}
+
+.sans {
+  font-family: sans-serif;
+}
+
 @media print {
   .print-hide {
     display: none;
