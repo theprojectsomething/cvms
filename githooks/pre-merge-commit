@@ -1,0 +1,22 @@
+#########################
+# Checks for merges into the public branch and disallows
+#
+# Set the public branch to check commits
+public_branch="public"
+#########################
+
+# retrieve the current branch
+current_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+# allow if current branch isn't public
+if [[ "$current_branch" != "$public_branch" ]];
+then
+  exit 0
+fi
+
+echo "\n(!) WARNING (!) \
+Merging into the \"$public_branch\" branch. Merging is disabled from potentially sensitive branches into this one.\n"
+
+echo "If this was intentional, please consider making the commits directly to the branch rather than merging. If this is not possible (and you can think of no other options) then you can force the merge by passing \"--no-verify\" to the merge command.\n"
+
+exit 1

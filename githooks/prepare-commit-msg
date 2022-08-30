@@ -1,0 +1,80 @@
+#########################
+# Checks for sensitive files in commits to the public branch
+# (specifically those from private routes) and disallows where
+# an override prefix isn't included in the commit message
+#
+# Set the public branch to check commits
+public_branch="public"
+#
+# Set the commit msg prefix that will allow a commit
+override_prefix_line="[allow $public_branch]"
+#########################
+
+# retrieve the current branch
+current_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+# allow the commit if we're not committing to the public branch
+if [[ "$current_branch" != "$public_branch" ]];
+then
+  exit 0
+fi
+
+# get the first line of the commit message
+commit_msg_first_line=`head -n1 $1`
+
+# if the override prefix line is present, strip it then allow the commit
+if [[ "$commit_msg_first_line" == "$override_prefix_line" ]];
+then
+  # strip allow prefix line from message
+  sed -i '' '1d' $1
+  exit 0
+fi
+
+# retrieve vite's "publicDir" from the config - this is where our routes are stored
+re="publicDir: ['\"][^'\"]*"
+custom_routes_dir="$(grep -o  "$re" vite.config.js | cut -c 13-)"
+
+# routes dir defaults to "public" (the vite default) if no custom var found
+routes_dir=${custom_routes_dir:-public}
+
+# get the branch to check against
+if git rev-parse --verify HEAD >/dev/null 2>&1
+then
+  against_branch=HEAD
+else
+  # Initial commit: diff against an empty tree object
+  against_branch=$(git hash-object -t tree /dev/null)
+fi
+
+# list the name of the commit files
+commit_files="$(git diff --cached --name-only $against_branch)"
+
+# iterate over the commit files, checking to see if any are in private routes
+private_files=$(for file in $commit_files 
+  do
+       # check if the file is in a subdirectory within the routes dir
+    if [[ "$(echo $file | cut -d/ -f1)" == "$routes_dir" ]] && \
+       [[ -n "$(echo $file | cut -d/ -f3)" ]] && \
+       # and that the subdirectory isn't the 'public' route
+       [[ "$(echo $file | cut -d/ -f2)" != "public" ]];
+    then
+      # this file shouldn't be committed to this branch
+      echo " - $file";
+    fi
+  done
+);
+
+# if nothing is private we can allow the commit
+if [[ -z "$private_files" ]];
+then
+  exit 0
+fi
+
+# otherwise print a warning that the files are about to be committed to a public branch
+echo "\n(!) WARNING (!) \
+\nCommitting to the \"$public_branch\" branch. Your commit contains the following files from private routes:\n"
+echo "$private_files\n"
+echo "If this was intentional, please add \"$override_prefix_line\" as the first line of your commit message to authorise the commit.\n"
+
+# reject the commit
+exit 1
