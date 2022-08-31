@@ -48,3 +48,6 @@ npm run publish
 - [] relative urls for components (per front-matter)
 - [] component attributes
 - [] placeholders for route info (e.g. passphrase, owner, description)
+- [] basic analytics for routes (CF GraphQL API)
+- [] admin route to view stats
+- [] live editing: edit routes / markdown (GH API)
