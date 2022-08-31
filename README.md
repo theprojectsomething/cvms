@@ -41,3 +41,10 @@ npm run publish
 ---
 
 *Further detail coming soon ...*
+
+## Todo
+
+- [] markdown components
+- [] relative urls for components (per front-matter)
+- [] component attributes
+- [] placeholders for route info (e.g. passphrase, owner, description)

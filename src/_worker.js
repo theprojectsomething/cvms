@@ -1,3 +1,4 @@
+import { sendBeacon } from './worker/analytics'
 import { getAuth, verifyAuthCredentials, verifyAuthToken } from './worker/auth'
 import { apiError, apiResponse, errorResponse, getPathRef, fetchRef } from './worker/request'
 
@@ -8,6 +9,13 @@ const basePath = '/';
 export default {
   async fetch(request, env, ctx) {
     const ref = getPathRef(request.url, basePath);
+
+    // analytics beacon
+    if (!env.preview) {
+      try {
+        await sendBeacon(ref, request);
+      } catch (e) {/* */}
+    }
 
     // shouldn't be able to access this url unless dns routing is buggy
     if (!ref.isBase) {
