@@ -12,8 +12,8 @@ export default {
 
     // analytics beacon
     try {
-      await sendBeacon(ref, request, env.preview);
-    } catch (e) {/* */}
+      sendBeacon(ref, request, env.preview);
+    } catch (e) {/* no beacon, no worries */}
 
     // shouldn't be able to access this url unless dns routing is buggy
     if (!ref.isBase) {

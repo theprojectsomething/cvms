@@ -41,7 +41,8 @@ function getPayload(location, referrer='', siteToken) {
     eventType: 1,
     firstPaint: 0,
     firstContentfulPaint: 0,
-    si: 100,
+    si: undefined,
+    st: 2,
     startTime: new Date().getTime(),
     versions: {
       js: '2021.12.0'
@@ -49,23 +50,22 @@ function getPayload(location, referrer='', siteToken) {
     pageloadId: getPageloadId(),
     location,
     siteToken,
-    st: 2
   }
 }
 
 // generate the analytics headers based on the original request
 // note that identifying information (IP, etc) is not included
 function getHeaders(ref, referrer, userAgent) {
-  return {
+  return new Headers({
     'Accept': '*/*',
     'Accept-Encoding': 'gzip, deflate, br',
     'Cache-Control': 'no-cache',
-    'content-type': 'application/json',
+    'Content-Type': 'application/json',
     'Host': ref.hostname,
     'Origin': ref.origin,
     'User-Agent': userAgent,
     ...(referrer && { 'Referer': referrer }),
-  };
+  });
 }
 
 // send an analytics beacon if enabled + production
@@ -95,7 +95,7 @@ export async function sendBeacon(ref, originalRequest, isPreview) {
   const payload = getPayload(originalRequest.url, referrer, CF_ANALYTICS_TOKEN);
 
   // post our web analytics payload
-  return fetch(`${ref.origin}/cdn-cgi/rum?`, {
+  return fetch('https://cloudflareinsights.com/cdn-cgi/rum', {
     method: 'POST',
     headers,
     body: JSON.stringify(payload),
