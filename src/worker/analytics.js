@@ -1,6 +1,28 @@
-const CF_ANALYTICS_TOKEN = import.meta.env.VITE_CF_ANALYTICS_TOKEN;
+/***
+ * Cloudflare Analytics
+ * ===
+ * 
+ * To enable pageview analytics from the API you can provide an analytics token and (optionally)
+ * a production hostname via vite environment variables in .env.local
+ * 
+ * Removing these environment variables will fully disable this script. 
+ *
+ * [ For full instructions see .env.local.example ]
+ * 
+ * ## Important Note (!)
+ * API pageview analytics come at the expense of useful performance information provided by client
+ * logs. If you would prefer performance logs, you should instead follow the standard analytics
+ * procedure (per the Cloudflare dashboard) and automatically embed analytics in your page.
+ * 
+ * Using both methods will lead to innacurate analytics (double dipping).
+ * **/
 
-getPageloadId = () => {
+// These values are set in .env.local
+const CF_ANALYTICS_TOKEN = import.meta.env.VITE_CF_ANALYTICS_TOKEN;
+const CF_ANALYTICS_HOST = import.meta.env.VITE_CF_ANALYTICS_HOST;
+
+// generate a UID for the pageload
+function getPageloadId() {
   let chars = '';
   for (const val of crypto.getRandomValues(new Uint8Array(16))) {
     chars += (val + 256).toString(16).substr(1);
@@ -8,11 +30,12 @@ getPageloadId = () => {
   return `${chars.slice(0, 8)}-${chars.slice(8, 12)}-${chars.slice(12, 16)}-${chars.slice(16, 20)}-${chars.slice(20, 32)}`;
 }
 
-function getPayload(location, referrer='', token) {
+// generate the analytics payload, per beacon.js initial requests
+function getPayload(location, referrer='', siteToken) {
   return {
     memory: {},
     resources: [],
-    referrer, // => e.g. 'https://cv.theprojectsomething.com/',
+    referrer,
     documentWriteIntervention: false,
     errorCount: 0,
     eventType: 1,
@@ -24,40 +47,55 @@ function getPayload(location, referrer='', token) {
       js: '2021.12.0'
     },
     pageloadId: getPageloadId(),
-    location: location, // => e.g 'https://cv.theprojectsomething.com/',
-    siteToken: token, // => e.g. 'e478600fe8c141ed9f212635f8e17bf4',
+    location,
+    siteToken,
     st: 2
   }
 }
 
-function getHeaders(origin, referrer, userAgent) {
+// generate the analytics headers based on the original request
+// note that identifying information (IP, etc) is not included
+function getHeaders(ref, referrer, userAgent) {
   return {
     'Accept': '*/*',
     'Accept-Encoding': 'gzip, deflate, br',
     'Cache-Control': 'no-cache',
     'content-type': 'application/json',
-    'Host': origin.replace(/^https?:\/\//, ''), // => e.g 'cv.theprojectsomething.com',
-    'Origin': origin, // => e.g 'https://cv.theprojectsomething.com'
+    'Host': ref.hostname,
+    'Origin': ref.origin,
     'User-Agent': userAgent,
-    ...(referrer && {'Referer': referrer}), // => e.g. 'https://cv.theprojectsomething.com/',
+    ...(referrer && { 'Referer': referrer }),
   };
 }
 
-export async function sendBeacon(ref, originalRequest) {
+// send an analytics beacon if enabled + production
+export async function sendBeacon(ref, originalRequest, isPreview) {
+  // no token? no logs for you
   if (ref.isFile || !CF_ANALYTICS_TOKEN) {
     return;
   }
+  // production build with an analytics host set that doesn't match? no logs for you
+  if (!isPreview && CF_ANALYTICS_HOST  && CF_ANALYTICS_HOST !== ref.hostname) {
+    return;
+  }
+
+  // only debug log for preview builds
+  if (isPreview) {
+    return console.log(
+      '[analytics:preview]\n → [Page View]',
+      originalRequest.url,
+      '\n → logs on',
+      CF_ANALYTICS_HOST ? `${CF_ANALYTICS_HOST} only` : 'non-preview builds only',
+    );
+  }
+
   const referrer = originalRequest.headers.get('referer') ?? undefined;
   const userAgent = originalRequest.headers.get('user-agent') || 'WorkerBot/0.0.1';
-  const headers = getHeaders(ref.origin, referrer, userAgent);
-  const payload = getPayload(
-    originalRequest.url,
-    referrer,
-    CF_ANALYTICS_TOKEN,
-  );
+  const headers = getHeaders(ref, referrer, userAgent);
+  const payload = getPayload(originalRequest.url, referrer, CF_ANALYTICS_TOKEN);
 
-  const url = `${ref.origin}/cdn-cgi/rum?`
-  return fetch(url, {
+  // post our web analytics payload
+  return fetch(`${ref.origin}/cdn-cgi/rum?`, {
     method: 'POST',
     headers,
     body: JSON.stringify(payload),

@@ -11,11 +11,9 @@ export default {
     const ref = getPathRef(request.url, basePath);
 
     // analytics beacon
-    if (!env.preview) {
-      try {
-        await sendBeacon(ref, request);
-      } catch (e) {/* */}
-    }
+    try {
+      await sendBeacon(ref, request, env.preview);
+    } catch (e) {/* */}
 
     // shouldn't be able to access this url unless dns routing is buggy
     if (!ref.isBase) {

@@ -59,7 +59,7 @@ export function errorResponse(ref, { type, error, headers }) {
 
 // get a path reference based on the url and expected components
 export function getPathRef(url, basePath, publicDir='public', sharedDir='shared') {
-  const { origin, pathname } = new URL(url);
+  const { hostname, origin, pathname } = new URL(url);
 
   // base without leading or trailing slashes
   const base = basePath.replace(/^\/|\/$/g, '');
@@ -80,6 +80,7 @@ export function getPathRef(url, basePath, publicDir='public', sharedDir='shared'
 
   // put together basic ref, valid for any path
   const ref = {
+    hostname,
     origin,
     pathname,
     isAuth,
