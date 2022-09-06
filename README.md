@@ -40,14 +40,20 @@ npm run publish
 
 ---
 
+## Basic analytics
+
+You can enable basic analytics for your application by following the instructions in `env.local.example` and including the required environment variables.
+
+To view your *admin-only* analytics dashboard, first update the passphrase in `routes/analytics/auth.json` (the default value is "analytics") and then re-deploy the application. Once deployed, enter your updated passphrase on the homepage. Analytics metrics should begin populating soon after initial deployment.
+
 *Further detail coming soon ...*
 
 ## Todo
 
-- [] markdown components
-- [] relative urls for components (per front-matter)
-- [] component attributes
-- [] placeholders for route info (e.g. passphrase, owner, description)
-- [] basic analytics for routes (CF GraphQL API)
-- [] admin route to view stats
-- [] live editing: edit routes / markdown (GH API)
+- [x] basic analytics for routes (CF GraphQL API)
+- [x] admin route to view stats
+- [ ] markdown components
+- [ ] relative urls for components (per front-matter)
+- [ ] component attributes
+- [ ] placeholders for route info (e.g. passphrase, owner, description)
+- [ ] live editing: edit routes / markdown (GH API)
