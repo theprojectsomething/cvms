@@ -75,7 +75,7 @@ function getHeaders(ref, referrer, userAgent) {
 // send an analytics beacon if enabled + production
 export async function sendBeacon(ref, originalRequest, isPreview) {
   // no token? no logs for you
-  if (ref.isFile || !CF_ANALYTICS_TOKEN) {
+  if (ref.isFile || ref.isGraphQL || !CF_ANALYTICS_TOKEN) {
     return;
   }
   // production build with an analytics host set that doesn't match? no logs for you
