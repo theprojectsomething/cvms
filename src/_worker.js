@@ -1,6 +1,6 @@
-import { sendBeacon } from './worker/analytics'
+import { sendBeacon, fetchAnalyticsData } from './worker/analytics'
 import { getAuth, verifyAuthCredentials, verifyAuthToken } from './worker/auth'
-import { apiError, apiResponse, errorResponse, getPathRef, fetchRef } from './worker/request'
+import { apiResponse, errorResponse, getPathRef, fetchRef } from './worker/request'
 
 // this is the root / base path for our app and the worker should really be setup to run
 // at this path on the domain. Everything below this path will 404 if it hits the worker
@@ -44,6 +44,11 @@ export default {
     // return errors from auth or verification
     if (auth.error) {
       return errorResponse(ref, auth);
+    }
+
+    // route graphql requests to analytics endpoint
+    if (ref.isGraphQL) {
+      return fetchAnalyticsData(ref, auth, request);
     }
 
     // prioritising for the auth user, but falling back to the ref user

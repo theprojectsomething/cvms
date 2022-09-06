@@ -1,0 +1,79 @@
+h1 {
+  margin-bottom: 0.5em;
+}
+
+ul, ol {
+  list-style: none;
+  padding:  0;
+}
+
+.plot {
+  position: relative;
+  z-index: 1;
+}
+
+.plot:empty {
+  aspect-ratio: 2.273;
+  background:  #eaeaea;
+}
+
+.plot--actions {
+  text-align: center;
+}
+
+.plot--refresh {
+  background: #e5e5e5;
+}
+
+.analytics--data {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 1em;
+}
+
+.analytics--count {
+  width: 100%;
+}
+
+.analytics--data h2 {
+  font-weight: 600;
+  font-size: 2em;
+}
+
+.analytics--data h3 {
+  font-size: 1.2em;
+  margin-top:  1em;
+  font-weight: 400;
+}
+
+[data-list] {
+  border: 1px dashed #bbb;
+  overflow:  auto;
+}
+
+[data-list] li {
+  padding: 0.5em 1em;
+  margin:  0;
+}
+
+[data-list] li:nth-child(2n + 1) {
+  background: #e5e5e5;
+}
+
+.analytics--wrap {
+  flex-grow: 1;
+  padding:  0.5em;
+}
+
+.analytics--paths {
+  min-height: 25em;
+  max-height: 40em;
+}
+
+.analytics--paths details {
+  margin:  0;
+}
+
+.analytics--paths summary small {
+  font-weight: 400;
+}

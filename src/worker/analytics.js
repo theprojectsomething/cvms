@@ -1,3 +1,5 @@
+import { graphqlError } from './request'
+
 /***
  * Cloudflare Analytics
  * ===
@@ -20,6 +22,8 @@
 // These values are set in .env.local
 const CF_ANALYTICS_TOKEN = import.meta.env.VITE_CF_ANALYTICS_TOKEN;
 const CF_ANALYTICS_HOST = import.meta.env.VITE_CF_ANALYTICS_HOST;
+const CF_ACCOUNT_ID = import.meta.env.VITE_CF_ACCOUNT_ID;
+const CF_GRAPHQL_TOKEN = import.meta.env.VITE_CF_GRAPHQL_TOKEN;
 
 // generate a UID for the pageload
 function getPageloadId() {
@@ -99,5 +103,31 @@ export async function sendBeacon(ref, originalRequest, isPreview) {
     method: 'POST',
     headers,
     body: JSON.stringify(payload),
+  });
+}
+
+// retrieve analytics data for the domain
+export async function fetchAnalyticsData(ref, auth, request) {
+  if (!auth.data.admin || request.method !== 'POST') {
+    return graphqlError();
+  }
+
+  const data = await request.clone().json();
+  if (data.variables) {
+    if (!data.variables.accountTag) {
+      data.variables.accountTag = CF_ACCOUNT_ID;
+    }
+    if (data.variables.filter && !data.variables.filter.requestHost) {
+      data.variables.filter.requestHost = CF_ANALYTICS_HOST;
+    }
+  }
+  const token = request.headers.get('Authorization') || CF_GRAPHQL_TOKEN;
+
+  return fetch('https://api.cloudflare.com/client/v4/graphql', {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 }

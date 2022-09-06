@@ -24,7 +24,7 @@ import { ExpiredException, UnauthorizedException, BadRequestException, BasicAuth
 const SECRET_KEY = import.meta.env.VITE_AUTH_SECRET_KEY;
 
 // retrieve our auth routes
-const ROUTE_AUTH = getRouteAuth();
+const AUTH_ROUTES = getAuthRoutes();
 
 // safari doesn't accept self-signed certs so in preview mode (local dev)
 // we'll manually update our cookie headers to remove secure context
@@ -39,23 +39,24 @@ export function getAuthCookie(path='', token='', expiry=new Date()) {
 }
 
 // process authentication for each of the routes
-function getRouteAuth() {
-  const authRoutes = import.meta.glob('/routes/*/auth.json', { eager: true });
+function getAuthRoutes() {
+  const availableAuthRoutes = import.meta.glob('/routes/*/auth.json', { eager: true });
   const markdownRaw = import.meta.glob('/routes/**/*.md', { as: 'raw', eager: true });
 
   // create our auth dictionary
-  const auth = new Map();
+  const byPassphrase = new Map();
+  const byRoute = new Map();
 
   // extract the routes dir from the glob import key (only works if there is an "auth.json" somewhere)
-  const routesDir = Object.keys(authRoutes)[0]?.split('/').slice(0, -2).join('/');
+  const routesDir = Object.keys(availableAuthRoutes)[0]?.split('/').slice(0, -2).join('/');
 
   if (!routesDir) {
     console.error(`❌ [auth:route] no "auth.json" files exist in your routes\n- see /src/worker/auth/index.js`);
-    return auth;
+    return byPassphrase;
   }
 
   const availableRoutes = new Set(['public', 'shared']);
-  for (const [path, routeAuth] of Object.entries(authRoutes)) {
+  for (const [path, routeAuth] of Object.entries(availableAuthRoutes)) {
     const route = path.split('/').at(-2)
 
     if (route === 'public' || route === 'shared') {
@@ -66,14 +67,13 @@ function getRouteAuth() {
     // add the route to the list of those with auth files
     availableRoutes.add(route);
 
-
     if (!routeAuth.passphrase) {
       console.error(`❌ [auth:route] "${path}" is missing a passphrase - ${route} is not accessible`);
       continue;
     }
 
-    if (auth.has(routeAuth.passphrase)) {
-      console.error(`❌ [auth:route] "${routesDir}/${route}" shares a passphrase with "${routesDir}/${auth.get(routeAuth.passphrase).route}" - ${route} is not accessible`);
+    if (byPassphrase.has(routeAuth.passphrase)) {
+      console.error(`❌ [auth:route] "${routesDir}/${route}" shares a passphrase with "${routesDir}/${byPassphrase.get(routeAuth.passphrase).route}" - ${route} is not accessible`);
       continue;
     }
     
@@ -90,7 +90,9 @@ function getRouteAuth() {
       expires = new Date(new Date().setHours(24 * 364));
     }
 
-    auth.set(routeAuth.passphrase, { ...routeAuth.default, expires, route });
+    const routeData = { ...routeAuth.default, expires, route };
+    byRoute.set(route, routeData);
+    byPassphrase.set(routeAuth.passphrase, routeData);
   }
 
   const warned = new Set();
@@ -102,7 +104,10 @@ function getRouteAuth() {
     }
   }
 
-  return auth;
+  return {
+    passphrase: byPassphrase,
+    route: byRoute,
+  };
 }
 
 const sanitiseUser = user =>
@@ -222,7 +227,7 @@ function headerAuth({ headers }) {
 // verifies auth credentials against a route
 export async function verifyAuthCredentials(auth, ref) {
   // lookup data associated with passphrase
-  const data = ROUTE_AUTH.get(auth.pass);
+  const data = AUTH_ROUTES.passphrase.get(auth.pass);
 
   if (!data) {
     // passphrase not found
@@ -244,6 +249,7 @@ export async function verifyAuthCredentials(auth, ref) {
     auth.verified = { expires };
     auth.token = token;
     auth.route = data.route;
+    auth.data = data;
 
     // specify a HttpOnly auth cookie containing our token
     auth.headers = {
@@ -258,6 +264,7 @@ export async function verifyAuthToken(auth, ref) {
     auth.verified = await verifyToken(auth.token, ref.route, SECRET_KEY);
     // update the route to verified route
     auth.route = auth.verified.route;
+    auth.data = AUTH_ROUTES.route.get(auth.route);
   } catch (e) {
     auth.error = UnauthorizedException(e.message);
   }
@@ -271,7 +278,6 @@ export async function getAuth(request, ref, env) {
     removeSecureCookieContext();
   }
 
-  getRouteAuth();
   // retrieve / parse credentials
   return await postAuth(request) || await cookieAuth(ref, request) || headerAuth(request) ||
   // default to authentication instructions

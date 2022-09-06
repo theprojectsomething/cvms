@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>the project:CV</title>
+  <slot data-static-href="/src/components/meta.html" />
+</head>
+<body class="page">
+<div class="page--inner">
+  <main>
+    <a class="page--back print-hide" href="./">← Back to documents</a> 
+    <slot data-markdown />
+
+    <div class="plot"></div>
+
+    <div class="plot--actions">
+      <small><button class="plot--refresh" data-icon="🤙">refresh</button></small><br>
+      <small class="plot--updated"></small>
+    </div>
+    <div class="analytics--data">
+      <h2 class="analytics--count">0 visits 0 pageviews</h2>
+
+      <div class="analytics--wrap">
+        <div class="analytics--pageviews">
+          <h3>Recent pageviews:</h3>
+          <ul class="analytics--paths" data-list="paths"></ul>
+        </div>
+      </div>
+
+      <div class="analytics--wrap">
+        <div>
+          <h3>Top countries:</h3>
+          <ul data-list="countries"></ul>
+        </div>
+
+        <div>
+          <h3>Top devices:</h3>
+          <ul data-list="devices"></ul>
+        </div>
+
+        <div>
+          <h3>Top referrers:</h3>
+          <ul data-list="referrers"></ul>
+        </div>
+
+        <!-- <div>
+          <h3>Top browsers:</h3>
+          <ul data-list="browsers"></ul>
+        </div>
+
+        <div>
+          <h3>Top operating systems:</h3>
+          <ul data-list="os"></ul>
+        </div> -->
+
+      </div>
+
+    </div>
+  </main>
+  <slot data-static-href="/src/components/footer.html" />
+</div>
+<link rel="stylesheet" href="src/styles.css">
+<script type="module">
+import { doPlot } from './src/plot/index.js';
+import queryAPI from './src/graphql.js';
+
+/*
+TO DO:
+- Add time filter (currently hard coded to 7 days)
+- Resolve "unknown" browsers / OS (currently commented)
+*/
+
+updateData();
+
+document.querySelector('.plot--refresh').addEventListener('click', updateData);
+
+const renderDimension = (dimension, data) => {
+  const $list = document.querySelector(`[data-list="${dimension}"]`);
+  if (!$list) return;
+
+  const list = [];
+  for (const item of data[dimension]) {
+    if (!item.dimensions.metric) {
+      continue;
+    }
+    const html = `<li><strong>${item.dimensions.metric}</strong> ${getViews(item.sum.visits, 'visits')}</li>`;
+    list.push(html);
+  }
+
+  $list.innerHTML = list.join('')
+}
+
+async function updateData() {
+  document.querySelector('.plot--updated').innerHTML = 'Last update: ' + new Date().toLocaleString();
+  const $paths = document.querySelector('.analytics--paths');
+  const { data, filter } = await queryAPI({
+    duration: 7 * 24 * 60 * 60 * 1000,
+  });
+  document.querySelector('.analytics--count').innerHTML = `${data.total[0].sum.visits.toLocaleString()} <small>visits</small> ${data.total[0].count.toLocaleString()} <small>pageviews</small>`
+  renderDimension('countries', data);
+  renderDimension('referrers', data);
+  renderDimension('browsers', data);
+  renderDimension('os', data);
+  renderDimension('devices', data);
+  const list = [];
+  const pathMap = new Map();
+  const plotData = [
+    [], // x series
+    [], // y series
+  ];
+  const setTimes = new Set();
+  const timeMap = new Map();
+  for (const { dimensions, count } of data.paths) {
+    const { datetime, path } = dimensions;
+    if (!pathMap.has(path)) {
+      pathMap.set(path, {
+        count: 0,
+        dates: [],
+      })
+    }
+    const item = pathMap.get(path);
+    item.count += count;
+    const date = new Date(datetime);
+    item.dates.push({ date, count});
+    const timestamp = Math.floor(date.getTime() / 1000);
+    let index;
+    if (setTimes.has(timestamp)) {
+      index = plotData[0].indexOf(timestamp);
+      plotData[1][index] += count;
+    } else {
+      setTimes.add(timestamp);
+      plotData[0].unshift(timestamp);
+      plotData[1].unshift(count);
+      index = 0;
+    }
+    
+    if (!timeMap.has(timestamp)) {
+      timeMap.set(timestamp, []);
+    }
+    timeMap.get(timestamp).push({ path, count, });
+
+    const hourBefore = timestamp - 60 * 60;
+    if (!setTimes.has(hourBefore)) {
+      setTimes.add(hourBefore);
+      plotData[0].unshift(hourBefore);
+      plotData[1].unshift(0);
+      index = 1;
+    }
+
+    const hourAfter = timestamp + 60 * 60;
+    if (!setTimes.has(hourAfter)) {
+      setTimes.add(hourAfter);
+      plotData[0].splice(index + 1, 0, hourAfter);
+      plotData[1].splice(index + 1, 0, 0);
+    }
+  }
+
+  for (const [path, item] of pathMap) {
+    const html = `<li><details><summary>${path} ${getViews(item.count)} <small>${item.dates[0].date.toLocaleDateString()}</small></summary>${item.dates.map(itemDate => `${itemDate.date.toLocaleString()} ${getViews(itemDate.count)}`).join('<br>')}</details></li>`;
+    list.push(html);
+  }
+
+  $paths.innerHTML = list.join('');
+
+  doPlot(plotData, (timestamp, pageviews, absTime, absViews) => {
+    const isTime = timeMap.has(timestamp);
+    const date = new Date((isTime ? timestamp : absTime) * 1000);
+    date.setMinutes(0, 0, 0);
+    const datestring = `${date.toLocaleTimeString()}<br><small>${date.toLocaleDateString()}</small>`;
+    return isTime
+    ? `${datestring}<br><small><strong>${timeMap.get(timestamp).sort((a, b) => b.count - a.count).map(item => `${item.path} ${getViews(item.count)}`).join('<br>')}</strong></small>`
+    : datestring;
+  })
+}
+
+function getViews(count, suffix) {
+  return count > 1 ? `(${suffix ? '' : '&times;'}${count}${suffix ? ' ' + suffix : ''})` : '';
+}
+
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uplot@1.6.22/dist/uPlot.min.css" integrity="sha256-N9lS8A3wBs6rAzJn4F8FDO3Y1pBkZ8yGUl3ueV3Ppqk=" crossorigin="anonymous">
+</body>
+</html>

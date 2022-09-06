@@ -2,6 +2,20 @@ import { getMarkdownAsset } from './markdown'
 import { getAuthCookie } from './auth'
 import { UnauthorizedException } from './auth/errors'
 
+function jsonResponse(body, status, headers) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      ...headers,
+      'content-type': 'application/json;charset=UTF-8',
+    }
+  });
+}
+
+export function graphqlError() {
+  return jsonResponse({ status: 401, message: 'Unauthorized' }, 401);
+}
+
 export function apiError(ref, { error, headers }, status) {
   return apiResponse(ref, { errors: [error], headers }, status || error.status);
 }
@@ -28,13 +42,7 @@ export function apiResponse(ref, { data, meta, errors, links, headers }, status=
   if (meta) {
     Object.assign(body.meta, meta);
   }
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      ...headers,
-      'content-type': 'application/json;charset=UTF-8',
-    }
-  })
+  return jsonResponse(body, status, headers);
 }
 
 export function errorResponse(ref, { type, error, headers }) {
@@ -114,9 +122,19 @@ export function getPathRef(url, basePath, publicDir='public', sharedDir='shared'
   const isApi = components[1] === 'api';
   if (isApi) {
     ref.isApi = true;
-    ref.baseurl += '/api';
   }
-  const [route, user, ...componentsEnd] = components.slice(isApi ? 2 : 1);
+
+  const isGraphQL = components[1] === 'graphql';
+  if (isGraphQL) {
+    ref.isGraphQL = true;
+  }
+  
+  const isPrefixedRoute = isApi || isGraphQL;
+  if (isPrefixedRoute) {
+    ref.baseurl += `/${components[1]}`;
+  }
+
+  const [route, user, ...componentsEnd] = components.slice(isPrefixedRoute ? 2 : 1);
   const isShared = componentsEnd[0] === sharedDir;
   const endpoint = componentsEnd.join('/');
 
