@@ -17,7 +17,7 @@
     "globby": "^13.1.2",
     "markdown-it-github-headings": "^2.0.1",
     "sass": "^1.54.5",
-    "vite": "^3.0.9",
+    "vite": "^3.1.0",
     "vite-plugin-html-inject": "^1.0.0",
     "vite-plugin-markdown": "^2.1.0",
     "wrangler": "^2.0.27"

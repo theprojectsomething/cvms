@@ -1,6 +1,8 @@
 import { readFile, writeFile } from 'fs/promises';
 import { globby } from 'globby';
 import { renderStaticComponents, renderSlotRegEx, resolvePath } from './static'
+import logger from '../../utils/logger';
+const { error } = logger('plugins', 'static-components');
 
 export async function renderAsyncStaticComponents(html, path, root) {
   const waiting = [];
@@ -13,7 +15,7 @@ export async function renderAsyncStaticComponents(html, path, root) {
         const subrender = await renderAsyncStaticComponents(template, templatePath, root);
         resolve(subrender.replace(/^./mg, `${prefix}$&`));
       } else {
-        console.error('❌ [plugin:static-components]', templatePath, `not found (in ${path})`);
+        error(`${templatePath} not found (in ${path})`);
         resolve(`${prefix}<!-- static component not found: ${href} -->`);
       }
     });

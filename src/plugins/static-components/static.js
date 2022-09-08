@@ -1,3 +1,6 @@
+import logger from '../../utils/logger';
+const { error } = logger('plugins', 'static-components');
+
 export const renderSlotRegEx = /^( *)?<slot [^>]*data-static-href=(["'])([^\2]*?)\2[^>]*\/?>(?:<\/slot>)?/gm;
 
 export const resolvePath = (relative, absolute) =>
@@ -11,7 +14,7 @@ export function renderStaticComponents(html, path, components) {
     if (template) {
       return renderStaticComponents(template, templatePath, components).replace(/^./mg, `${prefix}$&`);
     } else {
-      console.error('❌ [plugin:static-components]', templatePath, `not found (in ${path})`);
+      error(`${templatePath} not found (in ${path})`);
       return `${prefix}<!-- static component not found: ${href} -->`;
     }
   });
