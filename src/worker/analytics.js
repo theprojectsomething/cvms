@@ -1,4 +1,6 @@
 import { graphqlError } from './request'
+import logger from '@/utils/logger.js'
+const { log } = logger('analytics', 'preview');
 
 /***
  * Cloudflare Analytics
@@ -85,12 +87,7 @@ export async function sendBeacon(ref, originalRequest, isPreview) {
 
   // only debug log for preview builds
   if (isPreview) {
-    return console.log(
-      '[analytics:preview]\n → [Page View]',
-      originalRequest.url,
-      '\n → logs on',
-      CF_ANALYTICS_HOST ? `${CF_ANALYTICS_HOST} only` : 'non-preview builds only',
-    );
+    return log(`\n → [Page View] ${originalRequest.url}\n → logs on ` + (CF_ANALYTICS_HOST ? `${CF_ANALYTICS_HOST} only` : 'non-preview builds only'));
   }
 
   const referrer = originalRequest.headers.get('referer') ?? undefined;

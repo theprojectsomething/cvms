@@ -1,18 +1,24 @@
 import { renderStaticComponents } from '/src/plugins/static-components/static'
 const markdownSlotRegEx = /^( *)?<slot [^>]*data-markdown[^>]*\/?>(?:<\/slot>)?/gm;
+import logger from '@/utils/logger.js'
+const { error } = logger('markdown', 'loader');
 
 // we can't use this in the glob imports below (the globs can't include vars) but
 // we will need it to properly resolve the template to the markdown, etc. We "could"
-// import it from "assetsDir" in the config, but as it needs to be manually included
+// import it from "publicDir" in the config, but as it needs to be manually included
 // in the globs, we'd prefer the script to die hard if the assets dir changes
 // [!] REMINDER [!]: this value needs to be manually updated in the globs below
-const routesDir = '/routes';
 
-// note these are vite-specific globe import .. they do not support vars (e.g. `${routesDir}/...`)
-const markdownParsed = import.meta.glob('/routes/**/*.md', { eager: true });
-const markdownRaw = import.meta.glob('/routes/**/*.md', { as: 'raw', eager: true });
-const htmlTemplates = import.meta.glob('/routes/**/template.html', { as: 'raw', eager: true });
-const htmlComponents = import.meta.glob('/src/components/**/*.html', { as: 'raw', eager: true });
+// this value is set via a constant defined in vite.config.js
+// it can't be used in the "glob" imports below
+const contentDir = `/__CONTENT_DIR__`;
+
+// note these are vite-specific "glob" imports and do not allow script based vars (e.g. `/${contentDir}/**`)
+// .. see vite.config.js to update the __CONTENT_DIR__ constant
+const markdownParsed = import.meta.glob('/__CONTENT_DIR__/**/*.md', { eager: true });
+const markdownRaw = import.meta.glob('/__CONTENT_DIR__/**/*.md', { as: 'raw', eager: true });
+const htmlTemplates = import.meta.glob('/__CONTENT_DIR__/**/template.html', { as: 'raw', eager: true });
+const htmlComponents = import.meta.glob('/__COMPONENT_DIR__/**/*.html', { as: 'raw', eager: true });
 let cache;
 
 function getMarkdownTemplate(templatePath) {
@@ -48,7 +54,8 @@ function getMarkdownTemplate(templatePath) {
   for (const [path, { attributes, html, toc }] of Object.entries(markdownParsed)) {
     ++assetsLoaded;
     const md = markdownRaw[path].replace(/^---[\s\S]*?---\n\n/, '');
-    const pathKey = path.slice(routesDir.length, -3);
+    // remove the CONTENT_DIR prefix and the .md suffix
+    const pathKey = path.slice(contentDir.length, -3);
     const template = templateList.find(template => path.startsWith(template.path))?.html;
     cache.set(pathKey, {
       md, attributes, template,
@@ -61,7 +68,7 @@ function getMarkdownTemplate(templatePath) {
 
   // warn if no assets are loaded!
   if (!assetsLoaded) {
-    console.error(`❌ [markdown:loader]: no templates were loaded from ${routesDir} ... is this the right location?`)
+    error(`no templates were loaded from ${contentDir} ... is this the right location?`)
   }
 
   // return the cache

@@ -1,5 +1,7 @@
 import { generateToken, verifyToken } from './token.js';
 import { ExpiredException, UnauthorizedException, BadRequestException, BasicAuthHeaders } from './errors'
+import logger from '@/utils/logger.js'
+const { warn, error } = logger('auth', 'content');
 
 /***
  * Security / Authentication Info
@@ -40,27 +42,42 @@ export function getAuthCookie(path='', token='', expiry=new Date()) {
 
 // process authentication for each of the routes
 function getAuthRoutes() {
-  const availableAuthRoutes = import.meta.glob('/routes/*/auth.json', { eager: true });
-  const markdownRaw = import.meta.glob('/routes/**/*.md', { as: 'raw', eager: true });
+  const contentDir = `/__CONTENT_DIR__/`;
+  const publicContentDir = `/__CONTENT_DIR__/__CONTENT_PUBLIC_DIR__/`;
+  const sharedContentDir = `/__CONTENT_DIR__/__CONTENT_SHARED_DIR__/`;
+  const privateContentDir = `/__CONTENT_DIR__/__CONTENT_PRIVATE_DIR__/`;
+
+  // note these are vite-specific "glob" imports and do not allow script based vars (e.g. `/${contentDir}/**`)
+  // .. see vite.config.js to update the __CONTENT_DIR__ constants
+  const availableAuthRoutes = import.meta.glob('/__CONTENT_DIR__/**/auth.json', { eager: true });
+  const markdownRaw = import.meta.glob('/__CONTENT_DIR__/**.md', { as: 'raw', eager: true });
 
   // create our auth dictionary
   const byPassphrase = new Map();
   const byRoute = new Map();
 
-  // extract the routes dir from the glob import key (only works if there is an "auth.json" somewhere)
-  const routesDir = Object.keys(availableAuthRoutes)[0]?.split('/').slice(0, -2).join('/');
-
-  if (!routesDir) {
-    console.error(`❌ [auth:route] no "auth.json" files exist in your routes\n- see /src/worker/auth/index.js`);
+  // make sure at least one private route exists
+  if (!Object.keys(availableAuthRoutes).length) {
+    warn(`no "auth.json" files exist in your routes\n- see /src/worker/auth/index.js`);
     return byPassphrase;
   }
 
+  const warnedDirs = new Set();
   const availableRoutes = new Set(['public', 'shared']);
   for (const [path, routeAuth] of Object.entries(availableAuthRoutes)) {
-    const route = path.split('/').at(-2)
+    const route = path.split('/').at(-2);
+    const routePath = path.slice(0, -10);
 
-    if (route === 'public' || route === 'shared') {
-      console.error(`❌ [auth:route] "${routesDir}/${route}" includes an "auth.json" - you should remove this`);
+    // check for unintended auth.json in non-private dirs
+    if (!path.startsWith(privateContentDir)) {
+      // warnedDirs.add(routePath);
+      error(`"${routePath}" includes an "auth.json" but is not a private directory - move it to "${privateContentDir}${route}"`);
+      continue;
+    }
+
+    // check for unintended auth.json beyond a top-level private dir
+    if (!/^[^/]+\/auth\.json$/.test(path.slice(privateContentDir.length))) {
+      error(`"${path.slice(0, -10)}" includes an inactive "auth.json" - you should remove this`);
       continue;
     }
 
@@ -68,12 +85,12 @@ function getAuthRoutes() {
     availableRoutes.add(route);
 
     if (!routeAuth.passphrase) {
-      console.error(`❌ [auth:route] "${path}" is missing a passphrase - ${route} is not accessible`);
+      error(`"${path}" is missing a passphrase - ${route} is not accessible`);
       continue;
     }
 
     if (byPassphrase.has(routeAuth.passphrase)) {
-      console.error(`❌ [auth:route] "${routesDir}/${route}" shares a passphrase with "${routesDir}/${byPassphrase.get(routeAuth.passphrase).route}" - ${route} is not accessible`);
+      error(`"${routePath}" shares a passphrase with "${routePath}/${byPassphrase.get(routeAuth.passphrase).route}" - ${route} is not accessible`);
       continue;
     }
     
@@ -84,7 +101,7 @@ function getAuthRoutes() {
     if (isNaN(expires)) {
       // if expiry is a date object we know it has been set but is invalid
       if (expires) {
-        console.error(`❌ [auth:route] "${path}" expiry date is invalid - it has been set to +1 year`);
+        error(`"${path}" expiry date is invalid - it has been set to +1 year`);
       }
       // set expiry it to today + 364 days
       expires = new Date(new Date().setHours(24 * 364));
@@ -95,12 +112,31 @@ function getAuthRoutes() {
     byPassphrase.set(routeAuth.passphrase, routeData);
   }
 
-  const warned = new Set();
   for (const path in markdownRaw) {
-    const route = path.slice(routesDir.length + 1).split('/')[0];
-    if (route && !availableRoutes.has(route)) {
-      availableRoutes.add(route);
-      console.error(`❌ [auth:route] "${routesDir}/${route}" is missing an "auth.json" - ${route} is not accessible`);
+    const pathComponents = path.slice(contentDir.length).split('/');
+    const contentSubDir = pathComponents[0];
+    const contentSubDirPath = contentDir + contentSubDir;
+
+    // already warned
+    if (warnedDirs.has(contentSubDirPath)) {
+      continue;
+    }
+
+    // markdown file is in a private dir
+    if (path.startsWith(privateContentDir)) {
+      // private dir doesn't have an auth
+      if (!availableRoutes.has(pathComponents[1])) {
+        warnedDirs.add(contentSubDirPath);
+        error(`"${contentSubDirPath}" is missing an "auth.json" - ${pathComponents[1]} is not accessible`);
+      }
+      continue;
+    }
+
+    // markdown file isn't in public/shared dir
+    if (!path.startsWith(publicContentDir) && !path.startsWith(sharedContentDir)) {
+      warnedDirs.add(contentSubDirPath);
+      error(`"${contentSubDirPath}" is not accessible - move it into the public, shared or private directory`);
+      continue;
     }
   }
 
@@ -245,7 +281,7 @@ export async function verifyAuthCredentials(auth, ref) {
     auth.error = ExpiredException('Link has expired');
   } else {
     // generate a token from the passphrase data
-    const { token, expires } = await generateToken(data.route, data.expires, SECRET_KEY);
+    const { token, expires } = await generateToken(data.route, data.expires, SECRET_KEY, data.maxsession);
     auth.verified = { expires };
     auth.token = token;
     auth.route = data.route;

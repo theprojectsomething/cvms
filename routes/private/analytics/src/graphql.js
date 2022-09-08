@@ -130,7 +130,6 @@ export async function fetchQuery(filter, queries) {
 
   if (response.errors) {
     const error = response.errors[0];
-    console.error(error);
     throw new Error(error.message);
   }
 
