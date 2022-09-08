@@ -1,6 +1,6 @@
-# A private document server for your CV
+# CVMS: A private website for your CV
 
-A simple, private document server, designed for sharing access to sensitive things with a group (like a CV with a prospective employer). Built in modern javascript. Intended for deployment to modern serverless environments.
+A simple, private website for your CV - designed for managing sensitive documents, links and downloads and sharing access with small groups of people. Built in modern javascript. Intended for deployment to serverless environments.
 
 ## Features
 
@@ -14,9 +14,12 @@ A simple, private document server, designed for sharing access to sensitive thin
 - file based, no databases or remote I/O
 - HMAC-backed stateless authentication
 
-**See it in action [@theprojectsomething.com →](https://thesom.au/cv)**
+**See it in action: [@theprojectsomething.com](https://thesom.au/cv)** *← use the passphrase "let me in"* 
 
 ## Quick Start: to the Edge and back in <2mins
+
+**CVMS** is currently optimised for deployment to Cloudflare Pages - designed to play very nicely at the low-end of the generous free tier. To deploy the site per the example below you'll need a Cloudflare account (also free). For those who prefer to test things locally before publishing to the internet, use `npm run dev` in place of step 4, below ¯\\_ (ツ)_/¯
+
 1. Clone the repo
 ```sh
 git clone https://github.com/theprojectsomething/cv.git
@@ -26,10 +29,9 @@ cd cv
 ```sh
 node -e "console.log('VITE_AUTH_SECRET_KEY=\"'+crypto.randomBytes(16).toString('hex')+'\"')" > .env.local
 ```
-3. Install and build the app
+3. Install the app
 ```sh
 npm install
-npm run build
 ```
 4. Publish to the edge
 ```sh

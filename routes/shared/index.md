@@ -7,4 +7,4 @@ links:
 
 # SHARED
 
-Documents stored here are accessible by *anyone* with with *any passphrase*. 
+Documents stored here are accessible by anyone with a *valid passphrase*. 
