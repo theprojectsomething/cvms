@@ -26,21 +26,17 @@ Designed for securing and sharing sensitive documents, links and downloads with 
 git clone https://github.com/theprojectsomething/cvms.git
 cd cv
 ```
-2. Create a private key for in-app auth (you might want to revisit this later)
-```sh
-node -e "console.log('VITE_AUTH_SECRET_KEY=\"'+crypto.randomBytes(16).toString('hex')+'\"')" > .env.local
-```
-3. Install the app
+2. Install the app
 ```sh
 npm install
 ```
-4. Publish to the edge [^ahem]
+3. Publish to the edge [^ahem]
 ```sh
 npm run publish
 ```
-5. Visit the published url and log in with the passphrase `let me in`
+4. Visit the published url and log in with the passphrase `let me in`
 
-[^ahem]: **A note for the wary:** For those who live life far from the edge, or who simply prefer to test things locally before publishing to the world-wide-web, use `npm run dev` in place of step 4. ¯\\_ (ツ)_/¯
+[^ahem]: **A note for the wary:** For those who live life far from the edge, or who simply prefer to test things locally before publishing to the world-wide-web, use `npm run dev` in place of step 3. ¯\\_ (ツ)_/¯
 
 ---
 

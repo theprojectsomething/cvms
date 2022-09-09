@@ -9,7 +9,8 @@
     "dev": "vite build --mode development & (sleep 2 && npm run preview)",
     "preview": "wrangler pages dev ./dist --binding preview=1 --live-reload --local-protocol https",
     "publish": "npm run build && (sleep 1 && wrangler pages publish ./dist)",
-    "deploy": "npm run publish"
+    "deploy": "npm run publish",
+    "postinstall": "[ -e \".env.local\" ] && exit 0 || node -e 'console.log(`VITE_AUTH_SECRET_KEY=\"`+crypto.randomBytes(16).toString(`hex`)+`\"`)' > .env.local"
   },
   "author": "",
   "license": "MIT",
