@@ -1,24 +1,25 @@
-# CVMS: A private website for your CV
+# C✌️MS
 
-A simple, private website for your CV - designed for managing sensitive documents, links and downloads and sharing access with small groups of people. Built in modern javascript. Intended for deployment to serverless environments.
+**A simple, private website for your curriculum vitae**
 
-## Features
+Designed for securing and sharing sensitive documents, links and downloads with small groups of people. Built in modern javascript. Intended for deployment to a serverless environment.
 
-- Stateless, serverless, simple.
-- Zero javascript on the front-end, minimal dependencies otherwise
-- Limit access to documents with passphrases and time-limits
-- URLs structured for no-nonsense metrics
-- Markdown-rendered pages and templates
-- API access built-in
-- deploys to Cloudflare Pages in <2mins
-- file based, no databases or remote I/O
-- HMAC-backed stateless authentication
+## Stateless, serverless, simple.
 
-**See it in action: [@theprojectsomething.com](https://thesom.au/cv)** *← use the passphrase "let me in"* 
+- [x] file based - no databases or remote I/O
+- [x] zero javascript on the front-end, minimal dependencies otherwise
+- [x] limit access to documents with passphrases and time-limits
+- [x] URLs structured for no-nonsense metrics
+- [x] markdown-rendered pages and templates
+- [x] API access built-in
+- [x] deploys to Cloudflare Pages in <2mins
+- [x] HMAC-backed stateless authentication
 
-## Quick Start: to the Edge and back in <2mins
+**See it in action: [@theprojectsomething.com](https://thesom.au/cvms)** *← use the passphrase "let me in"* 
 
-**CVMS** is currently optimised for deployment to Cloudflare Pages - designed to play very nicely at the low-end of the generous free tier. To deploy the site per the example below you'll need a Cloudflare account (also free). For those who prefer to test things locally before publishing to the internet, use `npm run dev` in place of step 4, below ¯\\_ (ツ)_/¯
+## 🤖 Quick Start: life on the Edge in <2mins
+
+**CVMS** is currently optimised for deployment to Cloudflare Pages - designed to play very nicely at the low-end of the generous free tier. To deploy the site per the example below you'll need a Cloudflare account (also free).
 
 1. Clone the repo
 ```sh
@@ -33,24 +34,25 @@ node -e "console.log('VITE_AUTH_SECRET_KEY=\"'+crypto.randomBytes(16).toString('
 ```sh
 npm install
 ```
-4. Publish to the edge
+4. Publish to the edge [^ahem]
 ```sh
-# aliases: npx wrangler pages publish ./dist
 npm run publish
 ```
-5. Visit the published url and log into the default route with the passphrase `let me in`
+5. Visit the published url and log in with the passphrase `let me in`
+
+[^ahem]: **A note for the wary:** For those who live life away from the edge, or who simply prefer to test things locally before publishing to the world-wide-web, use `npm run dev` in place of step 4. ¯\\_ (ツ)_/¯
 
 ---
 
-## Basic analytics
+## 👻 Basic analytics
 
-You can enable basic analytics for your application by following the instructions in `env.local.example` and including the required environment variables.
+You can enable basic, domain-scoped analytics for your application by following the instructions in `env.local.example` to include the relevant information.
 
-To view your *admin-only* analytics dashboard, first update the passphrase in `routes/analytics/auth.json` (the default value is "analytics") and then re-deploy the application. Once deployed, enter your updated passphrase on the homepage. Analytics metrics should begin populating soon after initial deployment.
+To view your admin-only analytics dashboard, first update the passphrase in `routes/analytics/auth.json` (the default value is "analytics") and then re-deploy the application. Once deployed, enter your updated passphrase on the homepage. Analytics metrics will begin populating soon on deployment.
 
 *Further detail coming soon ...*
 
-## Todo
+## Still to do ...
 
 - [x] basic analytics for routes (CF GraphQL API)
 - [x] admin route to view stats
