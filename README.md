@@ -40,7 +40,7 @@ npm run publish
 ```
 5. Visit the published url and log in with the passphrase `let me in`
 
-[^ahem]: **A note for the wary:** For those who live life away from the edge, or who simply prefer to test things locally before publishing to the world-wide-web, use `npm run dev` in place of step 4. ¯\\_ (ツ)_/¯
+[^ahem]: **A note for the wary:** For those who live life far from the edge, or who simply prefer to test things locally before publishing to the world-wide-web, use `npm run dev` in place of step 4. ¯\\_ (ツ)_/¯
 
 ---
 
@@ -48,7 +48,7 @@ npm run publish
 
 You can enable basic, domain-scoped analytics for your application by following the instructions in `env.local.example` to include the relevant information.
 
-To view your admin-only analytics dashboard, first update the passphrase in `routes/analytics/auth.json` (the default value is "analytics") and then re-deploy the application. Once deployed, enter your updated passphrase on the homepage. Analytics metrics will begin populating soon on deployment.
+To view your admin-only analytics dashboard, first update the passphrase in `routes/analytics/auth.json` (the default value is "analytics") and then re-deploy the application. Once deployed, enter your updated passphrase on the homepage. Analytics metrics will begin populating soon after deployment.
 
 *Further detail coming soon ...*
 
