@@ -23,7 +23,7 @@ Designed for securing and sharing sensitive documents, links and downloads with 
 
 1. Clone the repo
 ```sh
-git clone https://github.com/theprojectsomething/cv.git
+git clone https://github.com/theprojectsomething/cvms.git
 cd cv
 ```
 2. Create a private key for in-app auth (you might want to revisit this later)
