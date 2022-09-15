@@ -1,7 +1,8 @@
-import { renderStaticComponents } from '/src/plugins/static-components/static'
-const markdownSlotRegEx = /^( *)?<slot [^>]*data-markdown[^>]*\/?>(?:<\/slot>)?/gm;
+import { AUTH_ROUTES } from '@/worker/auth';
 import logger from '@/utils/logger.js'
 const { error } = logger('markdown', 'loader');
+import { renderStaticComponents, renderStaticVars, resolveLink } from '@/plugins/static-components/static'
+const markdownSlotRegEx = /^( *)?<slot [^>]*data-markdown[^>]*\/?>(?:<\/slot>)?/gm;
 
 // we can't use this in the glob imports below (the globs can't include vars) but
 // we will need it to properly resolve the template to the markdown, etc. We "could"
@@ -29,10 +30,21 @@ function getMarkdownTemplate(templatePath) {
 
   // otherwise generate a new cache
   cache = new Map();
+
+  // generate per-route env vars based on the auth
+  const authEnv = new Map([...AUTH_ROUTES.route].map(([route, auth]) => {
+    const env = new Map();
+    for (const [key, val] of Object.entries(auth)) {
+      env.set(`AUTH_${key.toUpperCase()}`, val);
+    };
+    return [route, env];
+  }));
   
   // we'll use the static-components plugin logic to render any static slots in the templates 
   for (const [path, template] of Object.entries(htmlTemplates)) {
-    htmlTemplates[path] = renderStaticComponents(template, path, htmlComponents);
+    const pathKey = path.slice(contentDir.length, -3);
+    const privateRouteEnv = pathKey.startsWith(`/__CONTENT_PRIVATE_DIR__/`) && authEnv.get(pathKey.slice(1).split('/')[1]);
+    htmlTemplates[path] = renderStaticComponents(template, path, htmlComponents, privateRouteEnv);
   }
 
   // we'll use this to keep track of how many template/markdown files are loaded
@@ -53,14 +65,22 @@ function getMarkdownTemplate(templatePath) {
   // add rendered markdown and assigned template to cache
   for (const [path, { attributes, html, toc }] of Object.entries(markdownParsed)) {
     ++assetsLoaded;
-    const md = markdownRaw[path].replace(/^---[\s\S]*?---\n\n/, '');
     // remove the CONTENT_DIR prefix and the .md suffix
     const pathKey = path.slice(contentDir.length, -3);
     const template = templateList.find(template => path.startsWith(template.path))?.html;
+    // retrive any auth env vars reletive to the route
+    const privateRouteEnv = pathKey.startsWith(`/__CONTENT_PRIVATE_DIR__/`) && authEnv.get(pathKey.slice(1).split('/')[1]);
+
+    const renderedHtml = renderStaticComponents(html, path, htmlComponents, privateRouteEnv);
+    let md = markdownRaw[path].replace(/^---[\s\S]*?---\n\n/, '');
+    if (privateRouteEnv) {
+      md = renderStaticVars(md, privateRouteEnv);
+    }
+
     cache.set(pathKey, {
       md, attributes, template,
       parsed: {
-        html: renderStaticComponents(html, path, htmlComponents),
+        html: renderedHtml,
         toc,
       },
     });
@@ -112,7 +132,7 @@ export function getMarkdownAsset(ref) {
     if (markdown.attributes.links) {
       // iterate over lists, replacing opening tildas (~) with current base path
       apiData.content.attributes.links = markdown.attributes.links.map(link =>
-        link.replace(/^~/, ref.origin + ref.pathname).replace(/([^:])\/{2,}/g, '$1/'));
+        resolveLink(link, ref));
     }
     return apiData;
   }

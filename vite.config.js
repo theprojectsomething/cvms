@@ -81,7 +81,7 @@ export default ({ mode }) => {
     },
     plugins: [
       // a very simple custom plugin to import static html 'components'
-      // into html, at build time, using <slot data-static-href="{path}" /> 
+      // into html, at build time, using <slot href="{path}" /> 
       staticComponentsPlugin(),
 
       // a very simple custom plugin to filter the files that end up in the deployment dir
@@ -100,8 +100,8 @@ export default ({ mode }) => {
           '!**/auth.json', // auth files are virtualised in the worker
           '!**/template.html', // template files are only required for build
         ],
-        verbose: false,
-        dryRun: false,
+        verbose: isDevMode,
+        dryRun: isDevMode,
       }),
 
       // a very simple custom plugin to fuzzy rename sensitive dirs
@@ -111,8 +111,8 @@ export default ({ mode }) => {
           CONTENT_SHARED_DIR,
           CONTENT_PRIVATE_DIR,
         },
-        verbose: false,
-        dryRun: false,
+        verbose: isDevMode,
+        dryRun: isDevMode,
       }),
 
       // drop-in plugin to convert markdown to html and 'table of contents' (toc) for the api

@@ -52,8 +52,6 @@ To view your admin-only analytics dashboard, first update the passphrase in `rou
 
 - [x] basic analytics for routes (CF GraphQL API)
 - [x] admin route to view stats
+- [x] component attributes / variables / placeholders
 - [ ] markdown components
-- [ ] relative urls for components (per front-matter)
-- [ ] component attributes
-- [ ] placeholders for route info (e.g. passphrase, owner, description)
 - [ ] live editing: edit routes / markdown (GH API)

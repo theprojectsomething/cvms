@@ -1,7 +1,7 @@
 {
   "name": "@theprojectsomething/cvms",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.1.0",
+  "description": "A simple, private website for your curriculum vitae",
   "main": "_worker.js",
   "type": "module",
   "scripts": {

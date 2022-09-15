@@ -26,7 +26,7 @@ const { warn, error } = logger('auth', 'content');
 const SECRET_KEY = import.meta.env.VITE_AUTH_SECRET_KEY;
 
 // retrieve our auth routes
-const AUTH_ROUTES = getAuthRoutes();
+export const AUTH_ROUTES = getAuthRoutes();
 
 // safari doesn't accept self-signed certs so in preview mode (local dev)
 // we'll manually update our cookie headers to remove secure context
