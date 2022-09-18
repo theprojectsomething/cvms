@@ -284,8 +284,16 @@ button {
   font-family: sans-serif;
 }
 
+.print-show {
+  display: none;
+}
+
 @media print {
   .print-hide {
     display: none;
+  }
+
+  .print-show {
+    display: initial;
   }
 }

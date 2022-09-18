@@ -1,6 +1,14 @@
 /***
  *
- * Fuzzy specified folders in the deploymnet dir
+ * Fuzzy Out
+ * ===
+ * 
+ * Randomly renames specified folders in the deployment dir ...
+ * - accepts an object, either a directory KV object:
+ *     { key: dirname, [...] }
+ *   OR an options object:
+ *     { dirs: { key: dirname }, verbose: false, dryRun: false }
+ * - active mappings are available as env vars "__FUZZY__" and "__{key}_FUZZY__"
  *
  ***/
 

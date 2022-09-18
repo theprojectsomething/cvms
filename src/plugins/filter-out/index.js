@@ -1,8 +1,18 @@
 /***
  *
- * Note: this plugin is destructive - it removes files from your outDir, either the
- *       default "/dist" or the one specified in in vite.config.js ... because it
- *       works by exclusion it does not have access to directories above this
+ * Filter Out
+ * ===
+ * 
+ * Includes / removes specific files from your build / output directory using glob patterns
+ * - accepts a glob filter array that lists files / dirs / types to include, e.g:
+ *   ['include.file', 'include/dir', '!exclude.file']
+ * - alternatively, accepts an options object, e.g:
+ *   { filter: ['include', '!exclude'], verbose: false, dryRun: false }
+ * 
+ * Note: this plugin is destructive - it deletes files from your 'outDir' (either the default
+ * "/dist" or the one specified in in vite.config.js) ... However, as it works by exclusion it
+ * cannot remove anything beyond. Currently it simply clobbers the outDir following build,
+ * future iterations could potentially hook into the rollup pipeline.
  *
  ***/
 
@@ -124,7 +134,7 @@ export default function VitePluginFilterOut(globFilterOrOptions) {
             warn.bind('=== DRY RUN ===')();
           }
           log(
-            `Files not suitable for deployment have been removed from the "${outDir}/" directory:`,
+            `Files not intended for deployment have been removed from the "${outDir}/" directory:`,
             removed,
           );
           if (dryRun) {

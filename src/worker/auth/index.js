@@ -84,6 +84,11 @@ function getAuthRoutes() {
     // add the route to the list of those with auth files
     availableRoutes.add(route);
 
+    if (routeAuth.active === false) {
+      error(`${route} is inactive and not accessible`);
+      continue;
+    }
+
     if (!routeAuth.passphrase) {
       error(`"${path}" is missing a passphrase - ${route} is not accessible`);
       continue;
