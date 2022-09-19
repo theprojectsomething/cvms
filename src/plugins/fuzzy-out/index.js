@@ -35,7 +35,7 @@ export default function VitePluginFuzzyOut(fuzzyDirsOrOptions) {
     __FUZZY__: {}
   };
   for (const [key, dir] of Object.entries(fuzzyDirs)) {
-    const uuid = webcrypto.randomUUID();
+    const uuid = dryRun ? dir : webcrypto.randomUUID();
     define[`__${key}_FUZZY__`] = uuid;
     define.__FUZZY__[dir] = uuid;
   }
@@ -56,9 +56,7 @@ export default function VitePluginFuzzyOut(fuzzyDirsOrOptions) {
         const fuzzedError = new Map();
         for (const [dir, fuzzy] of Object.entries(define.__FUZZY__)) {
           try {
-            if (!dryRun) {
-              await rename(basePath + dir, basePath + fuzzy);
-            }
+            await rename(basePath + dir, basePath + fuzzy);
             fuzzed.set(dir, fuzzy);
           } catch (e) {
             fuzzedError.set(`${outDir}/${dir}`, `${outDir}/${fuzzy}`);
