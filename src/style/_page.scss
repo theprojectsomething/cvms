@@ -166,11 +166,10 @@
     }
   }
 
-  .experience {
-    @media print {
-      a {
-        text-decoration: none;
-      }
+  @media print {
+    a:not([href^="http"]) {
+      text-decoration: none;
+      pointer-events: none;
     }
   }
 
