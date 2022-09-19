@@ -167,7 +167,7 @@
   }
 
   @media print {
-    a:not([href^="http"]) {
+    a:not([href^="http"]):not([href*="@"]) {
       text-decoration: none;
       pointer-events: none;
     }
