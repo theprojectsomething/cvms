@@ -33,8 +33,9 @@
 
 .fig3d {
   perspective: 100em;
+  display: block;
 
-  .group {
+  .group3d {
     transform-style: preserve-3d;
   }
 }
@@ -197,15 +198,16 @@
   }
 }
 
-.server3d {
+.api3d {
   transform: translate(-50%, -100%) scale(0.6);
   pointer-events: none;
   width: 8em;
   height: 8em;
   position: absolute;
   transform-origin: 50% 100%;
-  top: -0.7em;
-  left: 50%;
+  top: -2em;
+  left: calc(50% - 1ch);
+  display: inline-block;
   
   .box3d {
     transform: translateY(2em) rotate3d(-2, -1, -1, 45deg);
@@ -216,16 +218,20 @@
   }
   
   .front,
-    .right,
-    .back,
-    .left,
-    .top,
-    .bottom {
-      transition: opacity 0.2s, transform 0.4s;
+  .right,
+  .back,
+  .left,
+  .top,
+  .bottom {
+    transition: opacity 0.2s, transform 0.4s;
+  }
+  
+  
+  #api3d a:not(:hover):not(:focus) ~ & {
+    .box-inner3d {
+      animation-play-state: paused;
     }
-  
-  
-  #server3d:not(:target) a[href="#server3d"]:not(:hover) ~ & {
+
     .front,
     .right,
     .back,
@@ -265,10 +271,9 @@
   .right { transition-delay: 0.2s; }
   .back { transition-delay: 0.2s; }
   .left { transition-delay: 0.2s; }
-  // .bottom { transition-delay: 0.1s; }
   
-  #server3d:target ~ &,
-  a[href="#server3d"]:hover ~ & {
+  #api3d a:focus ~ &,
+  #api3d a:hover ~ & {
     .bottom { transition-duration: 0.4s; }
   }
     
@@ -286,19 +291,13 @@
   }
 }
 
-#screen3d, #server3d, #awards3d {
+#screen3d, #api3d, #awards3d {
   position: relative;
-  padding: 0 3em;
+  display: inline-block;
+}
 
-  a {
-    h3 {
-      display: inline-block;
-    }
-  }
-  
-  &:target a {
-    text-decoration-style: double;
-  }
+#awards3d {
+  padding: 0 3em;
 }
 
 .screen3d {
@@ -308,8 +307,8 @@
   height: 8em;
   position: absolute;
   transform-origin: 50% 100%;
-  top: -1em;
-  left: 50%;
+  top: -2em;
+  left: calc(50% - 1ch);
 
   .group3d {
     position: relative;
@@ -322,8 +321,9 @@
     }
   }
 
-  #screen3d:target &,
-  a[href="#screen3d"]:hover ~ & {
+
+  #screen3d a:focus ~ &,
+  #screen3d a:hover ~ & {
     .group3d {
       transform: rotateX(-90deg);
     }
@@ -364,7 +364,7 @@
     }
   }
 
-  #screen3d:not(:target) a[href="#screen3d"]:not(:hover) ~ & {
+  #screen3d a:not(:hover):not(:focus) ~ & {
     .landscape .box-inner3d {
       transform: translateZ(-0.5em);
     }
@@ -408,6 +408,13 @@
   .top {
     box-shadow: 0 0 0 0.2em currentColor;
     border-radius: 0.2em;
+
+    span {
+      filter: grayscale(1);
+      opacity: 0.4;
+      font-size: 2.4em;
+      line-height: 1;
+    }
   }
 
   .portrait .top {

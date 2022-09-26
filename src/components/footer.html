@@ -1,9 +1,69 @@
 <footer>
-  <p>API access is <strong class="light">$</strong><span class="sans">&thinsp;</span><a href="/api/">available here</a></p>
-  <p>Having trouble? <a href="mailto:cv@theprojectsomething.com">Reach out</a></p>
-  <p class="footer--print">You can <a href="javascript:window.print();">print</a> this page</a></p>
+  <div class="footer--item">API access is <strong class="light">$</strong><span class="sans">&thinsp;</span><div id="api3d">
+      <!-- see https://codepen.io/theprojectsomething/pen/JjLLJNx -->
+      <a href="/api/">available here</a>
+      <div class="api3d fig3d">
+        <div class="box3d">
+          <div class="box-inner3d">
+            <aside class="front"></aside>
+            <aside class="right"></aside>
+            <aside class="back"></aside>
+            <aside class="left"></aside>
+            <aside class="top">API</aside>
+            <aside class="bottom"></aside>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer--item">Having trouble? 
+    <div id="screen3d">
+      <a href="mailto:cv@theprojectsomething.com">Reach out</a>
+      <div class="screen3d fig3d">
+        <div class="group3d">
+          <div class="box3d flat landscape">
+            <div class="box-inner3d">
+              <aside class="front"></aside>
+              <aside class="right"></aside>
+              <aside class="back"></aside>
+              <aside class="left"></aside>
+              <aside class="top">$#*!</aside>
+              <aside class="bottom"></aside>
+            </div>
+          </div>
 
-  <div class="light">
+          <div class="box3d flat small portrait">
+            <div class="box-inner3d">
+              <aside class="front"></aside>
+              <aside class="right"></aside>
+              <aside class="back"></aside>
+              <aside class="left"></aside>
+              <aside class="top"><span>🤬</span></aside>
+              <aside class="bottom"></aside>
+            </div>
+          </div>
+
+          <div class="box3d flat tiny portrait">
+            <div class="box-inner3d">
+              <aside class="front"></aside>
+              <aside class="right"></aside>
+              <aside class="back"></aside>
+              <aside class="left"></aside>
+              <aside class="top"><span>🤬</span></aside>
+              <aside class="bottom"></aside>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer--item footer--print">You can <a href="javascript:window.print();">print</a> this page</a></div>
+
+  <div class="footer--item light">
     <small>Made with 🖤 in <a href="https://theprojectsomething.com">Cairns, Australia</a>. <a href="https://thesom.au/gh/cvms">MIT licensed.</a></small>
   </div>
 </footer>
+
+<script>
+(function(t){t.toString=function(){return Array(100).join('\n')+'❤️ 2022 / som \n\n[ https://thesom.au/gh/cvms ]\n\nYou are browsing a javascript-free, serverless website'};console.log('%s',t)})(/./); // msg
+</script>

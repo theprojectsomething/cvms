@@ -5,36 +5,38 @@ footer {
   padding: 4em 0 2em;
   flex-wrap: wrap;
   justify-content: center;
-
-  p {
-    line-height: 1.4em;
-    margin: 0 0 0.8em;
-
-    &::before {
-      color: #bbb;
-      padding: 0 0.8em;
-    }
-    
-    &:first-child {
-      order: 1;
-    }
-  }
-
-  div {
-    width: 100%;
-    order: 1;
-  }
-
+  
   @media (min-width: $phone-tablet) {
     flex-direction: row;
+  }
+}
 
-    p:first-child {
+.footer--item {
+  line-height: 1.4em;
+  margin: 0 0 0.8em;
+
+  &::before {
+    color: #bbb;
+    padding: 0 0.8em;
+  }
+  
+  &:first-child {
+    order: 1;
+  }
+  
+  @media (min-width: $phone-tablet) {
+    &:first-child {
       order: 0;
     }
 
-    p:not(:first-child)::before {
+    &:not(:last-child):not(:first-child)::before {
       content: '/';
     }
+  }
+
+  &:last-child {
+    width: 100%;
+    order: 1;
   }
 }
 
